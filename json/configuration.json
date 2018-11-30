@@ -1,0 +1,14 @@
+{
+	"id": "configuration",
+	"data": [
+		{
+			"head": "0x01",
+			"seconds": 200
+		},
+		{
+			"head": "0x02",
+			"bid": 1,
+			"water": 22.22
+		}
+	]
+}
