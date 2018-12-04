@@ -1,12 +1,10 @@
-var msgpack = require('msgpack5')() // namespace our extensions
-  , encode  = msgpack.encode
-  , decode  = msgpack.decode
+var msgpack = require('msgpack5')();
 
-var keepAlive = require('./json/keep-alive.json')
+var data = require('./json/keep-alive-connectivity.json')
 
-var objStr = JSON.stringify(keepAlive);
+var objStr = JSON.stringify(data);
 
-var objBin = encode(keepAlive);
+var objBin = msgpack.encode(data);
 
 var objBase64 = objBin.toString("base64")
 
@@ -18,7 +16,7 @@ console.log(objBase64);
 
 var b = Buffer.from(objBase64, "base64");
 
-var s = JSON.stringify(decode(b));
+var s = JSON.stringify(msgpack.decode(b));
 
 console.log(b.length, b);
 

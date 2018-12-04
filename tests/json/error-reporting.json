@@ -1,8 +1,8 @@
 {
 	"msgType": "error-reporting",
 	"data": {
-		"id": "10001",
+		"id": 1000,
 		"mode": 0,
-		"code": "0x01"
+		"code": 1
 	}
 }

@@ -1,11 +1,11 @@
 {
 	"msgType": "machine-ops",
 	"data": {
-		"pid": "0x00",
+		"pid": 0,
 		"blend": [0, 0, 0, 0],
 		"water": 10,
 		"temp": 85.34,
-    "duration": 10000,
-		"level": "0x00"
+		"duration": 10000,
+		"level": 0
 	}
 }

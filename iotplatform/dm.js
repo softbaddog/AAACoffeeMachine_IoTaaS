@@ -1,5 +1,5 @@
 var request = require('request');
-var config = require('./config');
+var cfg = require('./config');
 
 var deviceInfo = {
   manufacturerId: 'HuaweiDemoID',
@@ -14,15 +14,15 @@ exports.registerDevice = (loginInfo, nodeId) => {
   return new Promise((resolve, reject) => {
     var options = {
       method: 'POST',
-      url: 'https://' + config.host + ':' + config.port + '/iocm/app/reg/v1.2.0/devices',
-      cert: config.cert,
-      key: config.key,
+      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/reg/v1.2.0/devices',
+      cert: cfg.cert,
+      key: cfg.key,
       headers: {
-        'app_key': config.appId,
+        'app_key': cfg.appId,
         'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
       },
       qs: {
-        'appId': config.appId
+        'appId': cfg.appId
       },
       body: {
         'verifyCode': nodeId,
@@ -50,15 +50,15 @@ exports.deleteDevice = (loginInfo, deviceId) => {
   return new Promise((resolve, reject) => {
     var options = {
       method: 'DELETE',
-      url: 'https://' + config.host + ':' + config.port + '/iocm/app/dm/v1.1.0/devices/' + deviceId,
-      cert: config.cert,
-      key: config.key,
+      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/dm/v1.1.0/devices/' + deviceId,
+      cert: cfg.cert,
+      key: cfg.key,
       headers: {
-        'app_key': config.appId,
+        'app_key': cfg.appId,
         'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
       },
       qs: {
-        'appId': config.appId
+        'appId': cfg.appId
       },
       strictSSL: false,
       json: true
@@ -84,15 +84,15 @@ exports.updateDevice = (loginInfo, deviceId, deviceName) => {
   return new Promise((resolve, reject) => {
     var options = {
       method: 'PUT',
-      url: 'https://' + config.host + ':' + config.port + '/iocm/app/dm/v1.2.0/devices/' + deviceId,
-      cert: config.cert,
-      key: config.key,
+      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/dm/v1.2.0/devices/' + deviceId,
+      cert: cfg.cert,
+      key: cfg.key,
       headers: {
-        'app_key': config.appId,
+        'app_key': cfg.appId,
         'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
       },
       qs: {
-        'appId': config.appId
+        'appId': cfg.appId
       },
       body: {
         name: deviceName,
@@ -128,11 +128,11 @@ exports.getDataHistorty = (loginInfo, deviceId, pageNo, pageSize) => {
   return new Promise((resovle, reject) => {
     var options = {
       method: 'GET',
-      url: 'https://' + config.host + ':' + config.port + '/iocm/app/data/v1.1.0/deviceDataHistory',
-      cert: config.cert,
-      key: config.key,
+      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/data/v1.1.0/deviceDataHistory',
+      cert: cfg.cert,
+      key: cfg.key,
       headers: {
-        'app_key': config.appId,
+        'app_key': cfg.appId,
         'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
       },
       qs: {

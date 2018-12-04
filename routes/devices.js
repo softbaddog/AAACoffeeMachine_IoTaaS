@@ -8,6 +8,7 @@ var msgpack = require('msgpack5')(); // namespace our extensions
 var auth = require('../iotplatform/auth');
 var dm = require('../iotplatform/dm');
 var sub = require('../iotplatform/sub');
+var cmd = require('../iotplatform/cmd');
 
 mongoose.connect('mongodb://localhost/AAA', {
   useNewUrlParser: true,
@@ -76,19 +77,26 @@ router.delete('/:id', function (req, res, next) {
 
 /* GET device listing. */
 router.get('/', function (req, res, next) {
-  Device.find({}, function (err, devices) {
-    if (err) {
-      return next(err);
-    } else {
-      res.json({
-        status: "0",
-        msg: "",
-        result: {
-          count: devices.count,
-          data: devices
-        }
-      });
-    }
+  Device.find({}, (err, devices) => {
+    if (err) return next(err);
+    res.format({
+      html: () => {
+        res.render('devices.pug', {
+          title: 'Device Management',
+          devices: devices
+        });
+      },
+      json: () => {
+        res.json({
+          status: "0",
+          msg: "",
+          result: {
+            count: devices.count,
+            data: devices
+          }
+        });
+      }
+    });
   });
 });
 
@@ -151,17 +159,51 @@ router.delete("/unbind/:id", (req, res, next) => {
 /* GET device detail. */
 router.get('/:id', function (req, res, next) {
   let pageNo = parseInt(req.query.pageNo) || 0;
-  let pageSize = parseInt(req.query.pageSize) || 10;
+  let pageSize = parseInt(req.query.pageSize) || 20;
   Device.findById(req.params.id, function (err, doc) {
     // You should check login first, register a new device, and then named it.
     dm.getDataHistorty(auth.loginInfo, doc.deviceId, pageNo, pageSize)
+      .then(data => {
+        res.format({
+          html: () => {
+            res.render('device.pug', {
+              title: 'Device Details',
+              count: data.totalCount,
+              data: data.dataHistorty
+            });
+          },
+          json: () => {
+            res.json({
+              status: "0",
+              msg: "",
+              result: {
+                count: data.totalCount,
+                data: data.dataHistorty
+              }
+            });
+          }
+        });
+      })
+      .catch(error => {
+        res.json({
+          status: error.statusCode,
+          msg: error.statusText
+        });
+      });
+  });
+});
+
+// Bind a new device with a readable name, and obtain a deviceId generated in OceanConnect Platform
+router.post("/cmd/:id", (req, res, next) => {
+  Device.findById(req.params.id, function (err, doc) {
+    console.log(req.body);
+    cmd.deviceCommands(auth.loginInfo, doc.deviceId, req.body)
       .then(data => {
         res.json({
           status: "0",
           msg: "",
           result: {
-            count: data.totalCount,
-            data: data.dataHistorty
+
           }
         });
       })
@@ -176,7 +218,7 @@ router.get('/:id', function (req, res, next) {
 
 // Bind a new device with a readable name, and obtain a deviceId generated in OceanConnect Platform
 router.post("/callback", (req, res, next) => {
-  console.log(req.body);
+  // console.log(req.body);
   Device.findOne({
     deviceid: req.body.deviceId
   }, function (err, doc) {

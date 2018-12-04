@@ -1,17 +1,17 @@
 const request = require('request');
-const config = require('./config');
+const cfg = require('./config');
 
 // fetch accessToken when longin, and update before timeout
 exports.fetchAccessToken = () => {
   return new Promise((resolve, reject) => {
     var options = {
       method: 'POST',
-      url: 'https://' + config.host + ':' + config.port + '/iocm/app/sec/v1.1.0/login',
-      cert: config.cert,
-      key: config.key,
+      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/sec/v1.1.0/login',
+      cert: cfg.cert,
+      key: cfg.key,
       form: {
-        'appId': config.appId,
-        'secret': config.secret
+        'appId': cfg.appId,
+        'secret': cfg.secret
       },
       strictSSL: false,
       json: true
@@ -33,4 +33,4 @@ exports.fetchAccessToken = () => {
       }
     });
   });
-}
+};
