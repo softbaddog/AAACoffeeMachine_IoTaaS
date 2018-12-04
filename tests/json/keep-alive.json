@@ -1,0 +1,16 @@
+{
+	"msgType": "keep-alive",
+	"data": {
+		"version": 0.1,
+		"mode": "0xFE",
+		"timestamp": "2018-11-27 22:22:22",
+		"reset": true,
+		"params": {
+			"IMSI": "18912345678",
+			"RSRP": -758,
+			"ECL": 0,
+			"SNR": 101,
+			"cellID": 124481105
+		}
+	}
+}

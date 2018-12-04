@@ -1,5 +1,5 @@
 var request = require('request');
-var config = require('./conf');
+var config = require('./config');
 
 exports.notifyTypeList = [{
               notifyType: 'deviceAdded',

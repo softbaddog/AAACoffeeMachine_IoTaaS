@@ -3,11 +3,13 @@ var router = express.Router();
 
 var mongoose = require('mongoose');
 
+var msgpack = require('msgpack5')(); // namespace our extensions
+
 var auth = require('../iotplatform/auth');
 var dm = require('../iotplatform/dm');
 var sub = require('../iotplatform/sub');
 
-mongoose.connect('mongodb://localhost/one_button', {
+mongoose.connect('mongodb://localhost/AAA', {
   useNewUrlParser: true,
   useCreateIndex: true
 });
@@ -32,15 +34,15 @@ var deviceSchema = mongoose.Schema({
 
 var Device = mongoose.model('Device', deviceSchema);
 
-// afeter 10 seconds, subscribe notifyType
-setTimeout(() => {
+// afeter fetchAccessToken, subscribe notifyType
+auth.fetchAccessToken().then(() => {
   console.log("subscribe is coming...");
   for (const item of sub.notifyTypeList) {
-    if (auth.loginInfo && item.enabled) {
+    if (item.enabled) {
       sub.subscribe(auth.loginInfo, item.notifyType);
     }
   }
-}, 10000);
+});
 
 /* Create a device */
 router.post('/', function (req, res, next) {
@@ -180,17 +182,17 @@ router.post("/callback", (req, res, next) => {
   }, function (err, doc) {
     switch (req.body.notifyType) {
       case "deviceDataChanged":
-        console.log(Buffer.from(req.body.service.data.DATA, "base64"));
+        console.log(Buffer.from(req.body.service.data.DATA, "base64").toString());
         break;
-  
+
       case "deviceAdded":
         break;
-  
+
       case "deviceDeleted":
         break;
     }
   });
-  
+
   res.writeHead(200);
   res.end('hello world\n');
 });
