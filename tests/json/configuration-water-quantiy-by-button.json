@@ -1,0 +1,10 @@
+{
+  "msgType": "configuration",
+  "data": {
+    "head": 2,
+    "bid": 1,
+    "water": 22.22,
+    "seconds": 50
+  }
+
+}

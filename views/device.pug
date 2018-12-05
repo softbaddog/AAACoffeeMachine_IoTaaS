@@ -1,0 +1,8 @@
+extends layout
+
+block content
+    h2 #{title} - Total Records:#{count}
+    .container
+      ul
+        each item in data
+            li #{item.timestamp} - #{Buffer.from(item.data.DATA, "base64")}

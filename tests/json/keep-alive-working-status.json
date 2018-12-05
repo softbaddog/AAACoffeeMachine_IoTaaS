@@ -1,0 +1,11 @@
+{
+	"msgType": "keep-alive",
+	"data": {
+		"version": 0.1,
+		"mode": 100,
+		"timestamp": "1970-01-01 00:00:00 UTC",
+		"params": {
+			"bid": 0
+		}
+	}
+}
