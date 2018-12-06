@@ -23,12 +23,6 @@ var server = http.createServer(app);
 const io = require('socket.io')(server);
 io.on('connection', () => { 
   console.log('a user connected');
-  socket.on('disconnect', function(){
-    console.log('user disconnected');
-  });
-  socket.on('dataChanged', function(msg){
-    console.log('message: ' + msg);
-  });
  });
 /**
  * Listen on provided port, on all network interfaces.

@@ -26,7 +26,7 @@ exports.fetchAccessToken = () => {
         resolve();
 
         setTimeout(() => {
-          fetchAccessToken();
+          this.fetchAccessToken();
         }, body.expiresIn * 1000 * 0.9);
       } else {
         console.log(body);

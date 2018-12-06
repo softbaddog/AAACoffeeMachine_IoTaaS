@@ -23,7 +23,8 @@ exports.deviceCommands = (loginInfo, deivceId, data) => {
           serviceId: 'RAW',
           method: 'CMD',
           paras: {
-            CMDDATA: msgpack.encode(data).toString('base64')
+            // CMDDATA: msgpack.encode(data).toString('base64')
+            CMDDATA: Buffer.from(data.Func).toString('base64')
           }
         },
         expireTime: 100
@@ -31,6 +32,8 @@ exports.deviceCommands = (loginInfo, deivceId, data) => {
       strictSSL: false,
       json: true
     };
+
+    console.log(JSON.stringify(options.body));
 
     request(options, (err, res, body) => {
       if (err) throw err;

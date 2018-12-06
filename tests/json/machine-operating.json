@@ -1,5 +1,6 @@
 {
-	"msgType": "machine-operating",
+	"method": "machine-operating",
+	"direction": "up",
 	"data": {
 		"bid": 5,
 		"blend": [0, 0, 0, 0],

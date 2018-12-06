@@ -6,4 +6,4 @@ block content
       ul
         each device in devices
           a(href="/devices/" + device._id + "?pageNo=0&pageSize=15")
-            li= device.nodeName 
+            li #{device.nodeName} - #{device.nodeId} 

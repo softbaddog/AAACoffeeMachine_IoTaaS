@@ -1,5 +1,6 @@
 {
-	"msgType": "configuration",
+	"method": "configuration",
+	"direction": "down",
 	"data": {
 		"head": 1,
 		"seconds": 200

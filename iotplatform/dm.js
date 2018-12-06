@@ -153,8 +153,7 @@ exports.getDataHistorty = (loginInfo, deviceId, pageNo, pageSize) => {
         });
       } else {
         reject({
-          statusCode: res.statusCode,
-          statusText: res.statusText
+          result: false
         });
       }
     });

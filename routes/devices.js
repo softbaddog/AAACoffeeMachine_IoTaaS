@@ -167,7 +167,8 @@ router.get('/:id', function (req, res, next) {
         res.format({
           html: () => {
             res.render('device.pug', {
-              title: 'Device Details',
+              title: doc.nodeName,
+              id: req.params.id,
               count: data.totalCount,
               data: data.dataHistorty
             });
@@ -199,13 +200,14 @@ router.post("/cmd/:id", (req, res, next) => {
     console.log(req.body);
     cmd.deviceCommands(auth.loginInfo, doc.deviceId, req.body)
       .then(data => {
-        res.json({
-          status: "0",
-          msg: "",
-          result: {
+        res.redirect('/devices/' + req.params.id);
+        // res.json({
+        //   status: "0",
+        //   msg: "",
+        //   result: {
 
-          }
-        });
+        //   }
+        // });
       })
       .catch(error => {
         res.json({
@@ -224,6 +226,14 @@ router.post("/callback", (req, res, next) => {
   }, function (err, doc) {
     switch (req.body.notifyType) {
       case "deviceDataChanged":
+        const b = Buffer.from(req.body.service.data.DATA, "base64");
+
+        var obj = msgpack.decode(b);
+        if (obj) {
+          if (obj.msgType === "keep-alive") {
+            console.log(obj);
+          }
+        }
         console.log(Buffer.from(req.body.service.data.DATA, "base64").toString());
         break;
 
