@@ -30,7 +30,10 @@ var deviceSchema = mongoose.Schema({
   "deviceId": {
     type: String,
     default: 0
-  } // get it from IoT platform
+  }, // get it from IoT platform
+  "status": String,
+  "createTime": Date,
+  "updateTime": Date,
 });
 
 var Device = mongoose.model('Device', deviceSchema);
@@ -165,14 +168,14 @@ router.get('/:id', function (req, res, next) {
     dm.getDataHistorty(auth.loginInfo, doc.deviceId, pageNo, pageSize)
       .then(data => {
         res.format({
-          html: () => {
-            res.render('device.pug', {
-              title: doc.nodeName,
-              id: req.params.id,
-              count: data.totalCount,
-              data: data.dataHistorty
-            });
-          },
+          // html: () => {
+          //   res.render('device.pug', {
+          //     title: doc.nodeName,
+          //     id: req.params.id,
+          //     count: data.totalCount,
+          //     data: data.dataHistorty
+          //   });
+          // },
           json: () => {
             res.json({
               status: "0",
@@ -220,21 +223,21 @@ router.post("/cmd/:id", (req, res, next) => {
 
 // Bind a new device with a readable name, and obtain a deviceId generated in OceanConnect Platform
 router.post("/callback", (req, res, next) => {
-  // console.log(req.body);
+  console.log(req.body);
   Device.findOne({
     deviceid: req.body.deviceId
   }, function (err, doc) {
     switch (req.body.notifyType) {
       case "deviceDataChanged":
-        const b = Buffer.from(req.body.service.data.DATA, "base64");
-
-        var obj = msgpack.decode(b);
-        if (obj) {
-          if (obj.msgType === "keep-alive") {
-            console.log(obj);
+        var obj = msgpack.decode(Buffer.from(req.body.service.data.rawData, "base64"));
+        if (obj instanceof Object) {
+          if (obj.method === "keep-alive") {
+            console.log(JSON.stringify(obj));
+            break;
           }
+        } else {
+          console.log(Buffer.from(req.body.service.data.rawData, "base64").toString());
         }
-        console.log(Buffer.from(req.body.service.data.DATA, "base64").toString());
         break;
 
       case "deviceAdded":
@@ -246,7 +249,7 @@ router.post("/callback", (req, res, next) => {
   });
 
   res.writeHead(200);
-  res.end('hello world\n');
+  res.end();
 });
 
 module.exports = router;

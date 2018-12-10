@@ -20,11 +20,11 @@ exports.deviceCommands = (loginInfo, deivceId, data) => {
       body: {
         deviceId: deivceId,
         command: {
-          serviceId: 'RAW',
+          serviceId: 'RawData',
           method: 'CMD',
           paras: {
             // CMDDATA: msgpack.encode(data).toString('base64')
-            CMDDATA: Buffer.from(data.Func).toString('base64')
+            rawData: Buffer.from(data.Func).toString('base64')
           }
         },
         expireTime: 100
