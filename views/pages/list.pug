@@ -4,11 +4,24 @@ block content
   .container
     .row
       table.table.table-hover.table-bordered
-        .thead
+        thead
           tr
-            th 设备名称
-            th 设备IMEI
-            th 绑定
-            th 查看
-            th 更新
-            th 删除
+            th NodeId
+            th NodeName
+            //-th CreateAt
+            th Bind/UnBind
+            th View
+            th Update
+            th Delete
+        tbody
+          each item in devices
+            tr(class='item-id-' + item._id)
+              td #{item.nodeId}
+              td #{item.nodeName}
+              //-td #{moment(item.meta.createdAt).format('MM/DD/YYYY')}
+              td: a(target='_blank', href='/device/bind/' + item._id) Bind
+              td: a(target='_blank', href='/device/' + item._id) View
+              td: a(target='_self', href= '/admin/update/' + item._id) Update
+              td
+                button.btn.btn-sm.btn-danger.del(type='button', data-id=item._id) Delete
+  script(src='/js/admin.js')
