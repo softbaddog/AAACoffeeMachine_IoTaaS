@@ -16,8 +16,7 @@ mongoose.connect('mongodb://localhost/AAA', {
   useCreateIndex: true
 });
 
-var db = mongoose.connection;
-db.once('open', () => {
+mongoose.connection.once('open', () => {
   console.log("MongoDB connected success.")
 });
 

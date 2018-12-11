@@ -1,6 +1,5 @@
 {
 	"method": "error-reporting",
-	"direction": "up",
 	"data": {
 		"error-id": 1000,
 		"mode": 0,

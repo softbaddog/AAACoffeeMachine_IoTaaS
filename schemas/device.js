@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-var DeviceSchema = mongoose.Schema({
+var DeviceSchema = new Schema({
   "nodeId": {
     type: String,
     index: true,
@@ -27,7 +28,7 @@ var DeviceSchema = mongoose.Schema({
   }
 });
 
-DeviceSchema.pre('save', function(next) {
+DeviceSchema.pre('save', function (next) {
   if (this.isNew) {
     this.meta.createdAt = this.meta.updatedAt = Date.now();
   } else {
@@ -37,16 +38,13 @@ DeviceSchema.pre('save', function(next) {
 });
 
 DeviceSchema.statics = {
-  fetch: function(cb) {
-    return this
-      .find({})
-      .sort('meta.updateAt');
-      exec(cb);
+  fetch: function (cb) {
+    return this.find({}, cb).sort('meta.updateAt');
   },
-  findById: function(id, cb) {
-    return this
-      .findOne({_id: id});
-      exec(cb);
+  findById: function (id, cb) {
+    return this.findOne({
+      _id: id
+    }, cb);
   }
 };
 

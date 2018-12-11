@@ -4,10 +4,10 @@ block content
   .container
     .row
       .col-md-3
+        p.text-center IMEI: #{device.nodeId}
         img.card-img-top(src="/img/DeltaCafe.png", alt="item.nodeName")
-        .btn-group.btn-group-lg
-          button.btn.btn-primary(type="button", data-toggle="modal", data-target="#myModal") 设置
-          button.btn.btn-primary(type="button", data-toggle="modal", data-target="#myModal") 操作
+        button.btn.btn-outline-primary.btn-block(type="button", data-toggle="modal", data-target="#myModal") Configuration
+        button.btn.btn-outline-primary.btn-block(type="button", data-toggle="modal", data-target="#myModal") Operation
         .modal.fade#myModal
           .modal-dialog.modal-sm
             .modal-content
@@ -20,16 +20,14 @@ block content
                 button.btn.btn-secondary(type="button", data-dismiss="modal") 关闭
       .col-md-2
         .list-group
-          a.list-group-item.list-group-item-action.active(href="#") Keep Alive
-          a.list-group-item.list-group-item-action(href="#") Machine Operation
-          a.list-group-item.list-group-item-action(href="#") Error Reporting
+          a.list-group-item.list-group-item-action(href="?method=keep-alive") Keep Alive
+          a.list-group-item.list-group-item-action(href="?method=machine-operating") Machine Operation
+          a.list-group-item.list-group-item-action(href="?method=error-reporting") Error Reporting
       .col-md-7
         .card
           .card-body
-            p .......
-            p .......
-            p .......
-            p .......
+            each item in data
+              p= item
         ul.pagination
           li.page-item
             a.page-link(href="#") Pervious

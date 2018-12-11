@@ -1,6 +1,5 @@
 {
 	"method": "operation",
-	"direction": "down",
 	"data": {
 		"head": 2,
 		"water": 10.22,

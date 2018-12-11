@@ -1,6 +1,5 @@
 {
 	"method": "operation",
-	"direction": "down",
 	"data": {
 		"head": 1
 	}

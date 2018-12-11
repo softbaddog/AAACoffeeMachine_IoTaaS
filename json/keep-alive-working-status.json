@@ -1,6 +1,5 @@
 {
 	"method": "keep-alive",
-	"direction": "up",
 	"data": {
 		"version": 0.1,
 		"mode": 100,

@@ -1,6 +1,5 @@
 {
   "method": "configuration",
-  "direction": "down",
   "data": {
     "head": 2,
     "bid": 1,

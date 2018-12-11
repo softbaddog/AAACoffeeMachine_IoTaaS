@@ -50,12 +50,13 @@ router.delete('/:id', function (req, res, next) {
 
 /* GET device listing. */
 router.get('/', function (req, res, next) {
-  Device.find({}, (err, devices) => {
-    if (err) return next(err);
+  Device.fetch(function (err, devices) {
+    if (err) console.log(err);
     res.format({
       html: () => {
         res.render('index', {
-          title: 'Device Management',
+          title: 'NOS Cafe',
+          desc: 'Coffee Machines Mangement',
           devices: devices
         });
       },
@@ -131,34 +132,46 @@ router.delete("/unbind/:id", (req, res, next) => {
 
 /* GET device detail. */
 router.get('/:id', function (req, res, next) {
+  let method = req.query.method || "keep-alive";
   let pageNo = parseInt(req.query.pageNo) || 0;
   let pageSize = parseInt(req.query.pageSize) || 20;
-  Device.findById(req.params.id, function (err, doc) {
+  Device.findById(req.params.id, function (err, device) {
     // You should check login first, register a new device, and then named it.
-    dm.getDataHistorty(auth.loginInfo, doc.deviceId, pageNo, pageSize)
+    dm.getDataHistorty(auth.loginInfo, device.deviceId, pageNo, pageSize)
       .then(data => {
         res.format({
           html: () => {
-            res.render('details.pug', {
-              title: doc.nodeName,
-              id: req.params.id,
-              count: data.totalCount,
-              data: data.dataHistorty
+            let item = [];
+            for (let d of data.dataHistorty) {
+              let obj = msgpack.decode(Buffer.from(d.data.rawData, "base64"));
+              if (obj instanceof Object) {
+                if (obj.method === method) {
+                  console.log(JSON.stringify(obj));
+                  item.push(JSON.stringify(obj));
+                }
+              }
+            }
+            res.render('details', {
+              title: device.nodeName,
+              desc: 'Coffee Machine Details',
+              device: device,
+              data: item
             });
           },
-          json: () => {
-            res.json({
-              status: "0",
-              msg: "",
-              result: {
-                count: data.totalCount,
-                data: data.dataHistorty
-              }
-            });
-          }
+          // json: () => {
+          //   res.json({
+          //     status: "0",
+          //     msg: "",
+          //     result: {
+          //       count: data.totalCount,
+          //       data: data.dataHistorty
+          //     }
+          //   });
+          // }
         });
       })
       .catch(error => {
+        console.log(error);
         res.json({
           status: error.statusCode,
           msg: error.statusText
