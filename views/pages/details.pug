@@ -1,0 +1,41 @@
+extends ../layout
+
+block content
+  .container
+    .row
+      .col-md-3
+        img.card-img-top(src="/img/DeltaCafe.png", alt="item.nodeName")
+        .btn-group.btn-group-lg
+          button.btn.btn-primary(type="button", data-toggle="modal", data-target="#myModal") 设置
+          button.btn.btn-primary(type="button", data-toggle="modal", data-target="#myModal") 操作
+        .modal.fade#myModal
+          .modal-dialog.modal-sm
+            .modal-content
+              .modal-header
+                h4.modal-title "头部"
+                button.close(type="button", data-dismiss="modal") &times;
+              .modal-body
+                p 内容
+              .modal-footer
+                button.btn.btn-secondary(type="button", data-dismiss="modal") 关闭
+      .col-md-2
+        .list-group
+          a.list-group-item.list-group-item-action.active(href="#") Keep Alive
+          a.list-group-item.list-group-item-action(href="#") Machine Operation
+          a.list-group-item.list-group-item-action(href="#") Error Reporting
+      .col-md-7
+        .card
+          .card-body
+            p .......
+            p .......
+            p .......
+            p .......
+        ul.pagination
+          li.page-item
+            a.page-link(href="#") Pervious
+          li.page-item
+            a.page-link(href="#") 1
+          li.page-item
+            a.page-link(href="#") 2
+          li.page-item
+            a.page-link(href="#") Next

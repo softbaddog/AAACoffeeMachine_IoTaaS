@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+  .container
+    .row
+      each item in devices
+        .col-md-4
+          .card
+            img.card-img-top(src="/img/DeltaCafe.png", alt="item.nodeName")
+            .card-body
+              h4.card-title= item.nodeName
+              p.card-text.text-success= item.meta.status
+              pre.card-text
+                | IMEI: #{item.nodeId} 
+                | CreateAt: 2018-12-1
+              a.btn.btn-primary(href="/devices/" + item._id) See Profile

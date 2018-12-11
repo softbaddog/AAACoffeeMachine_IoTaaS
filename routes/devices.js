@@ -1,44 +1,14 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const msgpack = require('msgpack5')();
+const Device = require('../models/device');
 
-var mongoose = require('mongoose');
+const auth = require('../iotplatform/auth');
+const dm = require('../iotplatform/dm');
+const sub = require('../iotplatform/sub');
+const cmd = require('../iotplatform/cmd');
 
-var msgpack = require('msgpack5')(); // namespace our extensions
-
-var auth = require('../iotplatform/auth');
-var dm = require('../iotplatform/dm');
-var sub = require('../iotplatform/sub');
-var cmd = require('../iotplatform/cmd');
-
-mongoose.connect('mongodb://localhost/AAA', {
-  useNewUrlParser: true,
-  useCreateIndex: true
-});
-
-var db = mongoose.connection;
-db.once('open', () => {
-  console.log("MongoDB connected success.")
-});
-
-var deviceSchema = mongoose.Schema({
-  "nodeId": {
-    type: String,
-    index: true,
-    unique: true
-  },
-  "nodeName": String,
-  "deviceId": {
-    type: String,
-    default: 0
-  }, // get it from IoT platform
-  "status": String,
-  "createTime": Date,
-  "updateTime": Date,
-});
-
-var Device = mongoose.model('Device', deviceSchema);
-
-// afeter fetchAccessToken, subscribe notifyType
+// After fetchAccessToken, subscribe notifyType
 auth.fetchAccessToken().then(() => {
   console.log("subscribe is coming...");
   for (const item of sub.notifyTypeList) {
@@ -84,7 +54,7 @@ router.get('/', function (req, res, next) {
     if (err) return next(err);
     res.format({
       html: () => {
-        res.render('devices.pug', {
+        res.render('index', {
           title: 'Device Management',
           devices: devices
         });
@@ -168,14 +138,14 @@ router.get('/:id', function (req, res, next) {
     dm.getDataHistorty(auth.loginInfo, doc.deviceId, pageNo, pageSize)
       .then(data => {
         res.format({
-          // html: () => {
-          //   res.render('device.pug', {
-          //     title: doc.nodeName,
-          //     id: req.params.id,
-          //     count: data.totalCount,
-          //     data: data.dataHistorty
-          //   });
-          // },
+          html: () => {
+            res.render('details.pug', {
+              title: doc.nodeName,
+              id: req.params.id,
+              count: data.totalCount,
+              data: data.dataHistorty
+            });
+          },
           json: () => {
             res.json({
               status: "0",
