@@ -166,14 +166,16 @@ router.post("/cmd/:id", (req, res, next) => {
 
 // Bind a new device with a readable name, and obtain a deviceId generated in OceanConnect Platform
 router.post("/callback", (req, res, next) => {
-  var statudMap = ["Power Off", 
-                   "Power On", 
-                   "Self Checking",
-                   "Pre heating", 
-                   "Finished pre heating",
-                   "Working Status",
-                    "Descaling","Stand By",
-                    ];
+  var statudMap = [
+    "Power Off",
+    "Power On",
+    "Self Checking",
+    "Pre heating",
+    "Finished pre heating",
+    "Working Status",
+    "Descaling",
+    "Stand By"
+  ];
   console.log(req.body);
   Device.findOne({
     deviceId: req.body.deviceId
@@ -187,7 +189,7 @@ router.post("/callback", (req, res, next) => {
           if (obj.method === "keep-alive") {
             doc.meta.status = statudMap[obj.data.mode];
             doc.meta.updateAt = moment(obj.timestamp);
-            doc.save(function(err, updateDoc) {
+            doc.save(function (err, updateDoc) {
               if (err) console.log(err);
               console.log(updateDoc);
             });
