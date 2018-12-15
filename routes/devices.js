@@ -5,48 +5,7 @@ const Device = require('../models/device');
 
 const auth = require('../iotplatform/auth');
 const dm = require('../iotplatform/dm');
-const sub = require('../iotplatform/sub');
 const cmd = require('../iotplatform/cmd');
-
-// After fetchAccessToken, subscribe notifyType
-auth.fetchAccessToken().then(() => {
-  console.log("subscribe is coming...");
-  for (const item of sub.notifyTypeList) {
-    if (item.enabled) {
-      sub.subscribe(auth.loginInfo, item.notifyType);
-    }
-  }
-});
-
-/* Create a device */
-router.post('/', function (req, res, next) {
-  var device = new Device(req.query);
-  device.save(function (err) {
-    if (err) {
-      return next(err);
-    } else {
-      res.json({
-        status: "0",
-        msg: "",
-        result: device
-      });
-    }
-  });
-});
-
-/* Delete a device */
-router.delete('/:id', function (req, res, next) {
-  Device.findByIdAndRemove(req.params.id, function (err, doc) {
-    if (err) {
-      return next(err);
-    } else {
-      res.json({
-        status: "0",
-        msg: "Remove ok"
-      });
-    }
-  });
-});
 
 /* GET device listing. */
 router.get('/', function (req, res, next) {
@@ -71,6 +30,56 @@ router.get('/', function (req, res, next) {
         });
       }
     });
+  });
+});
+
+/* GET device detail. */
+router.get('/:id', function (req, res, next) {
+  let method = req.query.method || "keep-alive";
+  let pageNo = parseInt(req.query.pageNo) || 0;
+  let pageSize = parseInt(req.query.pageSize) || 20;
+  Device.findById(req.params.id, function (err, device) {
+    // You should check login first, register a new device, and then named it.
+    dm.getDataHistorty(auth.loginInfo, device.deviceId, pageNo, pageSize)
+      .then(data => {
+        res.format({
+          html: () => {
+            let item = [];
+            for (let d of data.dataHistorty) {
+              let obj = msgpack.decode(Buffer.from(d.data.rawData, "base64"));
+              if (obj instanceof Object) {
+                if (obj.method === method) {
+                  console.log(JSON.stringify(obj));
+                  item.push(JSON.stringify(obj));
+                }
+              }
+            }
+            res.render('detail', {
+              title: device.nodeName,
+              desc: 'Coffee Machine Details',
+              device: device,
+              data: item
+            });
+          },
+          json: () => {
+            res.json({
+              status: "0",
+              msg: "",
+              result: {
+                count: data.totalCount,
+                data: data.dataHistorty
+              }
+            });
+          }
+        });
+      })
+      .catch(error => {
+        console.log(error);
+        res.json({
+          status: error.statusCode,
+          msg: error.statusText
+        });
+      });
   });
 });
 
@@ -122,56 +131,6 @@ router.delete("/unbind/:id", (req, res, next) => {
         });
       })
       .catch(error => {
-        res.json({
-          status: error.statusCode,
-          msg: error.statusText
-        });
-      });
-  });
-});
-
-/* GET device detail. */
-router.get('/:id', function (req, res, next) {
-  let method = req.query.method || "keep-alive";
-  let pageNo = parseInt(req.query.pageNo) || 0;
-  let pageSize = parseInt(req.query.pageSize) || 20;
-  Device.findById(req.params.id, function (err, device) {
-    // You should check login first, register a new device, and then named it.
-    dm.getDataHistorty(auth.loginInfo, device.deviceId, pageNo, pageSize)
-      .then(data => {
-        res.format({
-          html: () => {
-            let item = [];
-            for (let d of data.dataHistorty) {
-              let obj = msgpack.decode(Buffer.from(d.data.rawData, "base64"));
-              if (obj instanceof Object) {
-                if (obj.method === method) {
-                  console.log(JSON.stringify(obj));
-                  item.push(JSON.stringify(obj));
-                }
-              }
-            }
-            res.render('details', {
-              title: device.nodeName,
-              desc: 'Coffee Machine Details',
-              device: device,
-              data: item
-            });
-          },
-          // json: () => {
-          //   res.json({
-          //     status: "0",
-          //     msg: "",
-          //     result: {
-          //       count: data.totalCount,
-          //       data: data.dataHistorty
-          //     }
-          //   });
-          // }
-        });
-      })
-      .catch(error => {
-        console.log(error);
         res.json({
           status: error.statusCode,
           msg: error.statusText
