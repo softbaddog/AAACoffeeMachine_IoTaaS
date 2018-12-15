@@ -6,11 +6,12 @@ block content
       each item in devices
         .col-md-4
           .card
-            img.card-img-top(src="/img/DeltaCafe.png", alt="item.nodeName")
+            a.card-img-top(href="/devices/" + item._id)
+              img(src="/img/DeltaCafe.png", alt="item.nodeName")
             .card-body
               h4.card-title= item.nodeName
               p.card-text.text-success= item.meta.status
               pre.card-text
                 | IMEI: #{item.nodeId} 
-                | CreateAt: 2018-12-1
+                | Last Updated: #{moment(item.meta.updateAt).format('YYYY/MM/DD HH:mm:ss')}
               a.btn.btn-primary(href="/devices/" + item._id) See Profile

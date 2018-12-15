@@ -28,14 +28,14 @@ var DeviceSchema = new Schema({
   }
 });
 
-DeviceSchema.pre('save', function (next) {
-  if (this.isNew) {
-    this.meta.createdAt = this.meta.updatedAt = Date.now();
-  } else {
-    this.meta.updatedAt = Date.now();
-  }
-  next();
-});
+// DeviceSchema.pre('save', function (next) {
+//   if (this.isNew) {
+//     this.meta.createdAt = this.meta.updatedAt = Date.now();
+//   } else {
+//     this.meta.updatedAt = Date.now();
+//   }
+//   next();
+// });
 
 DeviceSchema.statics = {
   fetch: function (cb) {

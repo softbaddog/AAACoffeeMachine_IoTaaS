@@ -7,28 +7,17 @@ const auth = require('../iotplatform/auth');
 const dm = require('../iotplatform/dm');
 const cmd = require('../iotplatform/cmd');
 
+const myEmitter = require('../MyEmitter');
+const moment = require('moment');
+
 /* GET device listing. */
 router.get('/', function (req, res, next) {
   Device.fetch(function (err, devices) {
     if (err) console.log(err);
-    res.format({
-      html: () => {
-        res.render('index', {
-          title: 'NOS Cafe',
-          desc: 'Coffee Machines Mangement',
-          devices: devices
-        });
-      },
-      json: () => {
-        res.json({
-          status: "0",
-          msg: "",
-          result: {
-            count: devices.count,
-            data: devices
-          }
-        });
-      }
+    res.render('index', {
+      title: 'NOS Cafe',
+      desc: 'Coffee Machines Homepage',
+      devices: devices
     });
   });
 });
@@ -42,51 +31,33 @@ router.get('/:id', function (req, res, next) {
     // You should check login first, register a new device, and then named it.
     dm.getDataHistorty(auth.loginInfo, device.deviceId, pageNo, pageSize)
       .then(data => {
-        res.format({
-          html: () => {
-            let item = [];
-            for (let d of data.dataHistorty) {
-              let obj = msgpack.decode(Buffer.from(d.data.rawData, "base64"));
-              if (obj instanceof Object) {
-                if (obj.method === method) {
-                  console.log(JSON.stringify(obj));
-                  item.push(JSON.stringify(obj));
-                }
-              }
+        let item = [];
+        for (let d of data.dataHistorty) {
+          let obj = msgpack.decode(Buffer.from(d.data.rawData, "base64"));
+          if (obj instanceof Object) {
+            if (obj.method === method) {
+              console.log(JSON.stringify(obj));
+              item.push(JSON.stringify(obj));
             }
-            res.render('detail', {
-              title: device.nodeName,
-              desc: 'Coffee Machine Details',
-              device: device,
-              data: item
-            });
-          },
-          json: () => {
-            res.json({
-              status: "0",
-              msg: "",
-              result: {
-                count: data.totalCount,
-                data: data.dataHistorty
-              }
-            });
           }
+        }
+        res.render('detail', {
+          title: device.nodeName,
+          desc: 'Coffee Machine Details',
+          device: device,
+          data: item
         });
       })
-      .catch(error => {
-        console.log(error);
-        res.json({
-          status: error.statusCode,
-          msg: error.statusText
-        });
+      .catch(err => {
+        console.log(err);
+        next();
       });
   });
 });
 
 // Bind a new device with a readable name, and obtain a deviceId generated in OceanConnect Platform
-router.post("/bind/:id", (req, res, next) => {
+router.get("/bind/:id", (req, res, next) => {
   Device.findById(req.params.id, function (err, doc) {
-    // You should check login first, register a new device, and then named it.
     dm.registerDevice(auth.loginInfo, doc.nodeId)
       .then(deviceId => {
         console.log(deviceId);
@@ -97,17 +68,11 @@ router.post("/bind/:id", (req, res, next) => {
         }, function (err) {
           dm.updateDevice(auth.loginInfo, deviceId, doc.nodeName)
             .then(data => {
-              res.json({
-                status: "0",
-                msg: "bind device ok",
-                result: data
-              });
+              res.redirect('/admin/list');
             })
             .catch(err => {
-              res.json({
-                status: err.statusCode,
-                msg: err.statusText
-              });
+              console.log(err);
+              next();
             });
         });
       });
@@ -115,7 +80,7 @@ router.post("/bind/:id", (req, res, next) => {
 });
 
 // Unbind a device using deviceId
-router.delete("/unbind/:id", (req, res, next) => {
+router.get("/unbind/:id", (req, res, next) => {
   Device.findById(req.params.id, function (err, doc) {
     dm.deleteDevice(auth.loginInfo, doc.deviceId)
       .then(data => {
@@ -124,17 +89,12 @@ router.delete("/unbind/:id", (req, res, next) => {
             deviceId: 0
           }
         }, function (err) {
-          res.json({
-            status: "0",
-            msg: "unbind device ok",
-          });
+          res.redirect('/admin/list');
         });
       })
-      .catch(error => {
-        res.json({
-          status: error.statusCode,
-          msg: error.statusText
-        });
+      .catch(err => {
+        console.log(err);
+        next();
       });
   });
 });
@@ -146,37 +106,43 @@ router.post("/cmd/:id", (req, res, next) => {
     cmd.deviceCommands(auth.loginInfo, doc.deviceId, req.body)
       .then(data => {
         res.redirect('/devices/' + req.params.id);
-        // res.json({
-        //   status: "0",
-        //   msg: "",
-        //   result: {
-
-        //   }
-        // });
       })
-      .catch(error => {
-        res.json({
-          status: error.statusCode,
-          msg: error.statusText
-        });
+      .catch(err => {
+        console.log(err);
+        next();
       });
   });
 });
 
 // Bind a new device with a readable name, and obtain a deviceId generated in OceanConnect Platform
 router.post("/callback", (req, res, next) => {
+  var statudMap = ["Power Off", 
+                   "Power On", 
+                   "Self Checking",
+                   "Pre heating", 
+                   "Finished pre heating",
+                   "Working Status",
+                    "Descaling","Stand By",
+                    ];
   console.log(req.body);
   Device.findOne({
-    deviceid: req.body.deviceId
+    deviceId: req.body.deviceId
   }, function (err, doc) {
     switch (req.body.notifyType) {
       case "deviceDataChanged":
+        if (req.body.service.data.rawData == "undefined") break;
         var obj = msgpack.decode(Buffer.from(req.body.service.data.rawData, "base64"));
         if (obj instanceof Object) {
+          console.log(JSON.stringify(obj));
           if (obj.method === "keep-alive") {
-            console.log(JSON.stringify(obj));
-            break;
+            doc.meta.status = statudMap[obj.data.mode];
+            doc.meta.updateAt = moment(obj.timestamp);
+            doc.save(function(err, updateDoc) {
+              if (err) console.log(err);
+              console.log(updateDoc);
+            });
           }
+          myEmitter.emit("data", obj);
         } else {
           console.log(Buffer.from(req.body.service.data.rawData, "base64").toString());
         }

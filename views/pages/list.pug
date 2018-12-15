@@ -3,25 +3,26 @@ extends ../layout
 block content
   .container
     .row
-      table.table.table-hover.table-bordered
+      table.table.table-hover.table-bordered.table-sm
         thead
           tr
-            th NodeId
-            th NodeName
-            //-th CreateAt
-            th Bind/UnBind
-            th View
-            th Update
+            th Coffee Machine Name
+            th IMEI
+            th Day of Creation
+            th Bind to IoT Platform
             th Delete
         tbody
           each item in devices
-            tr(class='item-id-' + item._id)
+            tr(class='item-id-' + item._id, style="word-break:break-all")
+              td 
+                a(target='_self', href='/devices/' + item._id) #{item.nodeName}
               td #{item.nodeId}
-              td #{item.nodeName}
-              //-td #{moment(item.meta.createdAt).format('MM/DD/YYYY')}
-              td: a(target='_blank', href='/device/bind/' + item._id) Bind
-              td: a(target='_blank', href='/device/' + item._id) View
-              td: a(target='_self', href= '/admin/update/' + item._id) Update
+              td #{moment(item.meta.createdAt).format('MM/DD/YYYY hh:mm:ss')}
+              td
+                if item.deviceId == 0
+                  a.btn.btn-sm.btn-success(role='button', target='_self', href='/devices/bind/'+item._id) Bind
+                else
+                  a.btn.btn-sm.btn-warning(role='button', target='_self', href='/devices/unbind/'+item._id) Unbind
               td
                 button.btn.btn-sm.btn-danger.del(type='button', data-id=item._id) Delete
   script(src='/js/admin.js')

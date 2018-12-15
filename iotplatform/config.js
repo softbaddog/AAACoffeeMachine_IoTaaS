@@ -8,7 +8,7 @@ module.exports = {
 	secret: 'kYooQ7IQbWhf1alhyFX3BuDaRpwa',
 	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/client.crt')),
 	key: fs.readFileSync(path.resolve(__dirname, 'ssl/client.key')),
-	// callback_url: 'https://softbaddog.oicp.vip:443/devices/callback'
+	//callback_url: 'https://softbaddog.oicp.vip:443/devices/callback'
 	callback_url: 'http://softbaddog.oicp.net:13899/devices/callback'
 };
 
@@ -19,5 +19,5 @@ module.exports = {
 // 	secret: 'dEZQ0QIQzyTjB49aRuBrcNyfXcsa',
 // 	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/plt-app-gw.crt')),
 // 	key: fs.readFileSync(path.resolve(__dirname, 'ssl/plt-app-gw.key')),
-// 	callback_url: 'http://softbaddog.oicp.net:13899/devices/callback'
+// 	callback_url: 'http://178.15.147.143:1985/devices/callback'
 // };

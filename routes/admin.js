@@ -3,6 +3,9 @@ const router = express.Router();
 const _ = require('underscore');
 const Device = require('../models/device');
 
+const auth = require('../iotplatform/auth');
+const dm = require('../iotplatform/dm');
+
 /* GET users listing. */
 router.get('/list', function (req, res, next) {
   Device.fetch(function (err, devices) {
@@ -31,7 +34,8 @@ router.get('/list', function (req, res, next) {
 
 router.get('/device', function (req, res, next) {
   res.render('admin', {
-    title: 'Device Management Admin',
+    title: 'Nos Cafe',
+    desc: 'Device Management Admin',
     device: [{
       nodeId: '',
       nodeName: ''
@@ -112,14 +116,10 @@ router.post('/device/new', function (req, res) {
 
 /* Delete a device */
 router.delete('/list', function (req, res, next) {
-  var id = req.query.id;
-  Device.findByIdAndRemove(id, function (err, device) {
+  Device.findByIdAndRemove(req.query.id, function (err, device) {
     if (err) {
-      console.log("xxxxxx");
       console.log(err);
     } else {
-      console.log("oooooo");
-      console.log(device);
       res.json({
         success: 1
       });

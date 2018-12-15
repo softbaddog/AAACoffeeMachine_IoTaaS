@@ -1,6 +1,6 @@
 var msgpack = require('msgpack5')();
 
-var data = require('./json/keep-alive-connected.json')
+var data = require('./json/keep-alive-connected.json');
 
 var objStr = JSON.stringify(data);
 
