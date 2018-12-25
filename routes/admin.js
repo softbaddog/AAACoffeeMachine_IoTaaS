@@ -25,8 +25,9 @@ router.get('/list', function (req, res, next) {
     Device.find({}, function (err, devices) {
       if (err) console.log(err);
       res.render('list', {
-        title: 'NOS Cafe Admin',
-        desc: 'Coffee Machines Dashboard',
+        title: 'Smoke Sensors Admin',
+        desc: 'Smoke Sensors Dashboard',
+        user: req.user,
         devices: devices
       });
     });
@@ -40,8 +41,9 @@ router.get('/update/:id', function (req, res, next) {
     Device.findById(id, function (err, device) {
       Product.find({}, function (err, docs) {
         res.render('admin', {
-          title: 'NOS Cafe Admin',
-          desc: 'Update Coffee Machine',
+          title: 'Smoke Sensors Admin',
+          desc: 'Update Smoke Sensors',
+          user: req.user,
           products: docs,
           device: device
         });
@@ -56,6 +58,7 @@ router.get('/new', function (req, res, next) {
     res.render('admin', {
       title: 'NOS Cafe Admin',
       desc: 'Add a new Coffee Machine',
+      user: req.user,
       products: docs,
       device: {
         nodeId: '',
@@ -70,6 +73,7 @@ router.post('/new', function (req, res, next) {
   var id = req.body.device._id;
   var deviceObj = req.body.device;
   var _device;
+  console.log(deviceObj);
   if (id !== '') {
     Device.findById(id, function (err, device) {
       if (err) {
@@ -89,7 +93,8 @@ router.post('/new', function (req, res, next) {
     _device = new Device({
       nodeId: deviceObj.nodeId,
       nodeName: deviceObj.nodeName,
-      productId: deviceObj.productId
+      productId: deviceObj.productId,
+      userId: deviceObj.userId
     });
     _device.save(function (err, doc) {
       if (err) {

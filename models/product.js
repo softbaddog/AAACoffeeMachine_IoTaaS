@@ -1,5 +1,13 @@
 const mongoose = require('mongoose');
-const ProductSchema = require('../schemas/product');
-const Product = mongoose.model('Product', ProductSchema);
+const Schema = mongoose.Schema;
 
-module.exports = Product;
+const Product = new Schema({
+  deviceType: String,
+  productId: String,
+  manufacturerId: String,
+  manufacturerName: String,
+  model: String,
+  protocolType: String
+});
+
+module.exports = mongoose.model('Product', Product);;

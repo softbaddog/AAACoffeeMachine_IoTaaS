@@ -1,5 +1,14 @@
 const mongoose = require('mongoose');
-const RecordSchema = require('../schemas/record');
-const Record = mongoose.model('Record', RecordSchema);
+const Schema = mongoose.Schema;
 
-module.exports = Record;
+var Record = new Schema({
+  "deviceId": {
+    type: String,
+    index: true
+  },
+  "method": String,
+  "data": Object,
+  "eventTime": String,
+});
+
+module.exports = mongoose.model('Record', Record);;

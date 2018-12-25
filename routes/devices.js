@@ -35,9 +35,8 @@ router.get('/', function (req, res, next) {
   Device.find({}, function (err, devices) {
     if (err) console.log(err);
     res.render('index', {
-      // title: 'NOS Cafe',
-      title: 'Smoke Sensor',
-      desc: 'Coffee Machines Dashboard',
+      title: 'Alpha Smoke',
+      desc: 'Smoke Sensors Dashboard',
       devices: devices
     });
   });
@@ -53,7 +52,7 @@ router.get('/:id', function (req, res, next) {
     }, function (err, docs) {
       res.render('detail', {
         title: device.nodeName,
-        desc: 'Coffee Machine Details',
+        desc: 'Smoke Sensors Details',
         device: device,
         total: docs.length,
         records: docs

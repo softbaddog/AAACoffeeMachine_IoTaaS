@@ -7,6 +7,8 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const User = require("./models/user");
 
 const indexRouter = require('./routes/index');
 const productsRouter = require('./routes/products');
@@ -27,7 +29,9 @@ mongoose.connect('mongodb://localhost/AAA', {
 
 mongoose.connection.once('open', () => {
   console.log("MongoDB connected success.");
-  dis.load();
+  if (cfg.mode == 'basic') {
+    dis.load();
+  }
 });
 
 // view engine setup
@@ -41,16 +45,13 @@ app.use(express.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({
-  secret: "cats",
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+app.use(require('express-session')({
+  secret: 'keyboard cat',
   resave: false,
-  saveUninitialized: false,
-  // store: new MongoStore({
-  //   mongooseConnection: mongoose.connection
-  // }),
-  cookie: {
-    maxAge: 180 * 60 * 1000
-  }
+  saveUninitialized: false
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -61,7 +62,6 @@ app.use('/', indexRouter);
 app.use('/products', productsRouter);
 app.use('/devices', devicesRouter);
 app.use('/admin', adminRouter);
-
 
 auth.fetchAccessToken(cfg.mode).then((loginInfo) => {
   if (cfg.mode !== 'basic') {

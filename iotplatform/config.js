@@ -4,10 +4,10 @@ var path = require('path');
 // 公有云基础版
 module.exports = {
 	mode: 'basic', // old, basic, advanced
-	host: '49.4.80.153',
+	host: 'iot-api.huaweicloud.com', //49.4.80.153
 	port: '8743',
-	appId: 'JKPqwztsOWhqDEwkJmmakuCC6W4a',
-	secret: 'raj1afBE81xoc_tZ9Mt3w21e3boa',
+	appId: 'JiB0VrTtGqGI__XtVnvdoubm_g4a',
+	secret: 'MMGcwFibUPmgnUy0mAtk5VRGrvAa',
 	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/client.crt')),
 	key: fs.readFileSync(path.resolve(__dirname, 'ssl/client.key'))
 };

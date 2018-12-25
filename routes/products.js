@@ -10,9 +10,10 @@ router.get('/', function (req, res, next) {
   let pageSize = parseInt(req.query.pageSize) || 10;
   pm.getProducts(auth.loginInfo, pageNo, pageSize)
     .then(data => {
-      res.render('products', {
-        title: 'NOS Cafe',
+      res.render('product', {
+        title: 'Smoke Sensors',
         desc: 'Product Page',
+        user: req.user,
         totalCount: data.totalCount,
         products: data.products
       });

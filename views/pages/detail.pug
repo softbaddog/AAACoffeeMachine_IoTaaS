@@ -3,20 +3,20 @@ extends ../layout
 block content
   .container
     .row
-      .col-md-4
+      .col-md-3
         .card
           .card-body
-            img.card-img-top(src="/img/DeltaCafe.png", alt="item.nodeName")
+            img.card-img-top(src="/img/AlphaSmoke.png", alt="item.nodeName")
             p.text-center.text-success Connected
             .form-group.text-center
               .switch.switch-mini#mySwitch
                 input.form-control#inputSwitch(type='checkbox' checked data-on-text='ON' data-off-text='OFF' name='operation[power]')
-      .col-md-8
+      .col-md-9
         .row
           .col-md-3
-            button.btn.btn-outline-primary.btn-block(type="button", data-toggle="modal", data-target="#confModal") Configuration
+            //- button.btn.btn-outline-primary.btn-block(type="button", data-toggle="modal", data-target="#confModal") Configuration
           .col-md-3
-            button.btn.btn-outline-primary.btn-block(type="button", data-toggle="modal", data-target="#operModal") Operation
+            //- button.btn.btn-outline-primary.btn-block(type="button", data-toggle="modal", data-target="#operModal") Operation
             form.form-horizontal(action="/devices/cmd/" + device._id, role="form", method="POST" onsubmit="return")
               .modal.fade#confModal
                 .modal-dialog.modal-md
