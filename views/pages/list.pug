@@ -6,10 +6,12 @@ block content
       table.table.table-hover.table-bordered.table-sm
         thead
           tr
-            th Coffee Machine Name
+            th Name
             th IMEI
-            th Day of Creation
-            th Bind to IoT Platform
+            th Date created
+            th Status
+            th Bind to Platform
+            th Update
             th Delete
         tbody
           each item in devices
@@ -17,12 +19,16 @@ block content
               td 
                 a(target='_self', href='/devices/' + item._id) #{item.nodeName}
               td #{item.nodeId}
-              td #{moment(item.meta.createdAt).format('MM/DD/YYYY hh:mm:ss')}
+              td #{moment(item.meta.createdAt).format('YYYY/MM/DD HH:mm:ss')}
+              td 
+                a(target='_self', href='/admin/list?id=' + item._id) #{item.status}
               td
                 if item.deviceId == 0
-                  a.btn.btn-sm.btn-success(role='button', target='_self', href='/devices/bind/'+item._id) Bind
+                  a.btn.btn-sm.btn-success(role='button', target='_self', href='/admin/bind/'+item._id) Bind
                 else
-                  a.btn.btn-sm.btn-warning(role='button', target='_self', href='/devices/unbind/'+item._id) Unbind
+                  a.btn.btn-sm.btn-warning(role='button', target='_self', href='/admin/unbind/'+item._id) Unbind
+              td
+                a.btn.btn-sm.btn-info(roel='button', target='_self', href='/admin/update/' + item._id) Update
               td
                 button.btn.btn-sm.btn-danger.del(type='button', data-id=item._id) Delete
   script(src='/js/admin.js')

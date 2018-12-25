@@ -4,13 +4,18 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 const indexRouter = require('./routes/index');
+const productsRouter = require('./routes/products');
 const devicesRouter = require('./routes/devices');
 const adminRouter = require('./routes/admin');
 
+const cfg = require('./iotplatform/config');
 const auth = require('./iotplatform/auth');
 const sub = require('./iotplatform/sub');
+const dis = require('./iotplatform/dis');
 
 const app = express();
 
@@ -20,7 +25,41 @@ mongoose.connect('mongodb://localhost/AAA', {
 });
 
 mongoose.connection.once('open', () => {
-  console.log("MongoDB connected success.")
+  console.log("MongoDB connected success.");
+  dis.load();
+});
+
+passport.use('local', new LocalStrategy(
+  function (username, password, done) {
+    var user = {
+      id: '1',
+      username: 'admin',
+      password: 'admin'
+    }; // 可以配置通过数据库方式读取登陆账号
+
+    if (username !== user.username) {
+      return done(null, false, {
+        message: 'Incorrect username.'
+      });
+    }
+    if (password !== user.password) {
+      return done(null, false, {
+        message: 'Incorrect password.'
+      });
+    }
+
+    console.log(username, password);
+
+    return done(null, user);
+  }
+));
+
+passport.serializeUser(function (user, done) { //保存user对象
+  done(null, user); //可以通过数据库方式操作
+});
+
+passport.deserializeUser(function (user, done) { //删除user对象
+  done(null, user); //可以通过数据库方式操作
 });
 
 // view engine setup
@@ -29,33 +68,41 @@ app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({
+  extended: true
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+// app.use(session({ secret: "cats" }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.locals.moment = require('moment');
 
 app.use('/', indexRouter);
+app.use('/products', productsRouter);
 app.use('/devices', devicesRouter);
 app.use('/admin', adminRouter);
 
-// After fetchAccessToken, subscribe notifyType
-auth.fetchAccessToken().then(() => {
-  console.log("subscribe is coming...");
-  for (const item of sub.notifyTypeList) {
-    if (item.enabled) {
-      sub.subscribe(auth.loginInfo, item.notifyType);
+
+auth.fetchAccessToken(cfg.mode).then((loginInfo) => {
+  if (cfg.mode !== 'basic') {
+    console.log("subscribe is coming...");
+    for (const item of sub.notifyTypeList) {
+      if (item.enabled) {
+        sub.subscribe(loginInfo, item.notifyType);
+      }
     }
   }
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

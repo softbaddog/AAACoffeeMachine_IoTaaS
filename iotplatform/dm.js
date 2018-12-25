@@ -2,19 +2,20 @@ var request = require('request');
 var cfg = require('./config');
 
 var deviceInfo = {
-  manufacturerId: 'HuaweiDemoID',
+  manufacturerId: '39129ce1-aab6-4142-8393-64b33b92d798',
   manufacturerName: 'HuaweiDemo',
   deviceType: 'Base64Demo',
   model: 'Base64',
   protocolType: 'CoAP'
 };
 
-// register a device
-exports.registerDevice = (loginInfo, nodeId) => {
-  return new Promise((resolve, reject) => {
-    var options = {
+const url = 'https://' + cfg.host + ':' + cfg.port;
+
+const createOptions = (loginInfo, nodeId, productId) => {
+  if (cfg.mode == 'old') {
+    return {
       method: 'POST',
-      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/reg/v1.2.0/devices',
+      url: url + '/iocm/app/reg/v1.2.0/devices',
       cert: cfg.cert,
       key: cfg.key,
       headers: {
@@ -32,25 +33,49 @@ exports.registerDevice = (loginInfo, nodeId) => {
       strictSSL: false,
       json: true
     };
-    request(options, (err, res, body) => {
+  } else {
+    return {
+      method: 'POST',
+      url: url + '/api/v3.0/devices',
+      cert: cfg.cert,
+      key: cfg.key,
+      headers: {
+        'app_key': cfg.appId,
+        'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
+      },
+      qs: {
+        'ownerAppId': cfg.appId
+      },
+      body: {
+        'productId': productId,
+        'nodeId': nodeId,
+        'timeout': 0
+      },
+      strictSSL: false,
+      json: true
+    };
+  }
+};
+
+// register a device
+exports.registerDevice = (loginInfo, nodeId, productId) => {
+  return new Promise((resolve, reject) => {
+    request(createOptions(loginInfo, nodeId, productId), (err, res, body) => {
+      console.log(res.body);
       if (!err && res.statusCode === 200) {
         resolve(body.deviceId);
       } else {
-        reject({
-          statusCode: res.statusCode,
-          statusText: res.statusText
-        });
+        console.log(err);
       }
     });
   });
 };
 
-// delete a device
-exports.deleteDevice = (loginInfo, deviceId) => {
-  return new Promise((resolve, reject) => {
-    var options = {
+const deleteOptions = (loginInfo, deviceId) => {
+  if (cfg.mode == 'old') {
+    return {
       method: 'DELETE',
-      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/dm/v1.1.0/devices/' + deviceId,
+      url: url + '/iocm/app/dm/v1.1.0/devices/' + deviceId,
       cert: cfg.cert,
       key: cfg.key,
       headers: {
@@ -63,17 +88,68 @@ exports.deleteDevice = (loginInfo, deviceId) => {
       strictSSL: false,
       json: true
     };
-    request(options, (error, res, body) => {
-      if (!error && res.statusCode === 204) {
+  } else {
+    return {
+      method: 'DELETE',
+      url: url + '/api/v3.0/devices/' + deviceId,
+      cert: cfg.cert,
+      key: cfg.key,
+      headers: {
+        'app_key': cfg.appId,
+        'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
+      },
+      qs: {
+        'ownerAppId': cfg.appId
+      },
+      strictSSL: false,
+      json: true
+    };
+  }
+};
+
+// delete a device
+exports.deleteDevice = (loginInfo, deviceId) => {
+  return new Promise((resolve, reject) => {
+    request(deleteOptions(loginInfo, deviceId), (err, res, body) => {
+      console.log(body, res.statusCode);
+      if (!err) {
         resolve({
           result: true
         });
       } else {
-        console.log(body);
-        reject({
-          statusCode: res.statusCode,
-          statusText: res.statusText
+        console.log(err);
+      }
+    });
+  });
+};
+
+// Query a device's status
+exports.statusDevice = (loginInfo, deviceId) => {
+  return new Promise((resolve, reject) => {
+    var options = {
+      method: 'GET',
+      url: url + '/api/v3.0/devices/' + deviceId + '/status',
+      cert: cfg.cert,
+      key: cfg.key,
+      headers: {
+        'app_key': cfg.appId,
+        'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
+      },
+      qs: {
+        'deviceId': deviceId,
+        'ownerAppId': cfg.appId
+      },
+      strictSSL: false,
+      json: true
+    };
+    request(options, (err, res, body) => {
+      console.log(body);
+      if (!err) {
+        resolve({
+          status: body.status
         });
+      } else {
+        console.log(err);
       }
     });
   });
@@ -106,6 +182,7 @@ exports.updateDevice = (loginInfo, deviceId, deviceName) => {
       json: true
     };
     request(options, (err, res, body) => {
+      console.log(body);
       if (!err) {
         resolve({
           deviceInfo: {
@@ -114,10 +191,7 @@ exports.updateDevice = (loginInfo, deviceId, deviceName) => {
           }
         });
       } else {
-        reject({
-          statusCode: res.statusCode,
-          statusText: res.statusText
-        });
+        console.log(err);
       }
     });
   });

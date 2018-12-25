@@ -1,22 +1,30 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-var DeviceSchema = new Schema({
+var deviceSchema = new Schema({
   "nodeId": {
     type: String,
     index: true,
     unique: true
   },
-  "nodeName": String,
+  "nodeName": {
+    type: String,
+    unique: true
+  },
+  "productId": {
+    type: String,
+    index: true,
+    unique: true
+  },
   "deviceId": {
     type: String,
     default: 0
   },
+  "status": {
+    type: String,
+    default: "UNACTIVE"
+  },
   "meta": {
-    "status": {
-      type: String,
-      default: "Disconnect"
-    },
     "createdAt": {
       type: Date,
       default: Date.now()
@@ -28,24 +36,8 @@ var DeviceSchema = new Schema({
   }
 });
 
-// DeviceSchema.pre('save', function (next) {
-//   if (this.isNew) {
-//     this.meta.createdAt = this.meta.updatedAt = Date.now();
-//   } else {
-//     this.meta.updatedAt = Date.now();
-//   }
-//   next();
-// });
+deviceSchema.pre('save', function (next) {
+  next();
+});
 
-DeviceSchema.statics = {
-  fetch: function (cb) {
-    return this.find({}, cb).sort('meta.updateAt');
-  },
-  findById: function (id, cb) {
-    return this.findOne({
-      _id: id
-    }, cb);
-  }
-};
-
-module.exports = DeviceSchema;
+module.exports = deviceSchema;

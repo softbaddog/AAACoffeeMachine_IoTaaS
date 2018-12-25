@@ -24,10 +24,51 @@ exports.deviceCommands = (loginInfo, deivceId, data) => {
           method: 'CMD',
           paras: {
             // CMDDATA: msgpack.encode(data).toString('base64')
-            rawData: Buffer.from(data.Func).toString('base64')
+            rawData: Buffer.from(data).toString('base64')
           }
         },
-        expireTime: 100
+        expireTime: 0
+      },
+      strictSSL: false,
+      json: true
+    };
+
+    console.log(JSON.stringify(options.body));
+
+    request(options, (err, res, body) => {
+      if (err) throw err;
+
+      if (res.statusCode === 201) {
+        resolve();
+      } else {
+        console.log(body);
+      }
+    });
+  });
+};
+
+exports.deviceCommandsBasic = (loginInfo, deviceId, data) => {
+  return new Promise((resolve, reject) => {
+    var options = {
+      method: 'POST',
+      url: 'https://' + cfg.host + ':' + cfg.port + '/api/v3.0/devices/' + deviceId + '/commands',
+      cert: cfg.cert,
+      key: cfg.key,
+      headers: {
+        'app_key': cfg.appId,
+        'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
+      },
+      qs: {
+        'ownerAppId': cfg.appId
+      },
+      body: {
+        serviceId: 'RawData',
+        method: 'CMD',
+        body: {
+          // CMDDATA: msgpack.encode(data).toString('base64')
+          rawData: Buffer.from(data).toString('base64')
+        },
+        expireTime: 0
       },
       strictSSL: false,
       json: true

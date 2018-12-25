@@ -10,8 +10,8 @@ block content
               img(src="/img/DeltaCafe.png", alt="item.nodeName")
             .card-body
               h4.card-title= item.nodeName
-              p.card-text.text-success= item.meta.status
+              p.card-text.text-success= item.status
               pre.card-text
                 | IMEI: #{item.nodeId} 
-                | Last Updated: #{moment(item.meta.updateAt).format('YYYY/MM/DD HH:mm:ss')}
+                | Last Updated: #{moment(item.meta.updatedAt).format('YYYY/MM/DD HH:mm:ss')}
               a.btn.btn-primary(href="/devices/" + item._id) See Profile

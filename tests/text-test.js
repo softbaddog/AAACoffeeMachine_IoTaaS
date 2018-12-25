@@ -1,6 +1,11 @@
 
-var data = "Machine_Open";
+var data = "Machine_Close";
 
 var buf = Buffer.from(data);
 
-console.log(buf);
+var temp = "";
+for (const b of buf) {
+  temp += b.toString(16) + " ";
+}
+
+console.log(temp);

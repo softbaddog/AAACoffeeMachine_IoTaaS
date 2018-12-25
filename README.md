@@ -1,9 +1,10 @@
 # AAACaffeeMachine_IoTaaS
 
 - GET localhost:3000/
+- GET localhost:3000/devices
 - GET localhost:3000/devices/1
-- GET localhost:3000/admin/list
-- GET localhost:3000/admin/device
+
+- GET localhost:3000/admin
 
 - POST/GET/PUT/DELETE localhost:3000/api/devices
 - POST localhost:3000/api/devices/bind

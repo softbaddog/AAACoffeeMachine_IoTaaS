@@ -2,5 +2,5 @@ script(src="/socket.io/socket.io.js")
 script.
   const socket = io();
   socket.on('data', function(obj) {
-    console.log(JSON.stringify(obj));
+    location.reload();
   });

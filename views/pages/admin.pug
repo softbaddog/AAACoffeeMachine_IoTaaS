@@ -3,18 +3,25 @@ extends ../layout
 block content
   .container
     .row
-      form.form-horizontal(method="post", action="/admin/device/new")
-        input(name='device[_id]', type="hidden", value=device._id)
-        .form-group
-          label.col-sm-3.control-label(for='inputNodeId') NodeID(IMEI)
-          .col-sm-9
-            input#inputNodeId.form-control(name='device[nodeId]',type='text',value=device.nodeId,placeholder='IMEI in NB Module')
-        
-        .form-group
-          label.col-sm-3.control-label(for='inputNodeName') NodeName
-          .col-sm-9
-            input#inputNodeName.form-control(name='device[nodeName]',type='text',value=device.nodeName,placeholder='A Memorable name')
-        
-        .form-group
-          .col-sm-offset-2.col-sm-10
-            button.btn.btn-default(type = 'submit') Submit
+      .col-md-4
+        form.form-horizontal(method="POST", action="/admin/new")
+          input(name='device[_id]', type="hidden", value=device._id)
+
+          .form-group
+            label(for='inputProductId') Prouduct (model)
+            select#inputProductId.form-control(name='device[productId]')
+              each product in products
+                if (device.productId == product.productId)
+                  option(value=product.productId "selected") #{product.model}
+                else
+                  option(value=product.productId) #{product.model}
+
+          .form-group
+            label(for='inputNodeId') NodeID (IMEI)
+            input#inputNodeId.form-control(name='device[nodeId]',type='text',value=device.nodeId)
+
+          .form-group
+            label(for='inputNodeName') NodeName (memorable name)
+            input#inputNodeName.form-control(name='device[nodeName]',type='text',value=device.nodeName)
+
+          button.btn.btn-primary(type = 'submit') Submit
