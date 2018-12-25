@@ -1,12 +1,24 @@
 var express = require('express');
 var router = express.Router();
+const Device = require('../models/device');
+const User = require('../models/user');
 const crypto = require('crypto');
 const cryptoRandomString = require('crypto-random-string');
 var CryptoJS = require("crypto-js");
 const passport = require('passport');
 
-/* GET device listing. */
 router.get('/', function (req, res, next) {
+  Device.find({}, function (err, devices) {
+    if (err) console.log(err);
+    res.render('index', {
+      title: 'NOS Cafe',
+      desc: 'Home Page',
+      devices: devices
+    });
+  });
+});
+
+router.get('/login', function (req, res, next) {
   res.render('login', {
     title: 'NOS Cafe',
     desc: 'Login Page'
@@ -14,11 +26,42 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/login',
-  passport.authenticate('local', {
-    successRedirect: '/devices',
-    failureRedirect: '/'
-  })
-);
+  passport.authenticate('local.login', {
+    successRedirect: '/',
+    failureRedirect: '/login',
+    failureFlash: true
+  }));
+
+router.get('/register', function (req, res, next) {
+  res.render('register', {
+    title: 'NOS Cafe',
+    desc: 'Register Page',
+    hasError: false,
+    messages: []
+  });
+});
+
+router.post('/register',
+  passport.authenticate('local.register', {
+    successRedirect: '/',
+    failureRedirect: '/register',
+    failureFlash: true
+  }),
+  function (req, res, next) {
+
+    // if (req.body['password-repeat'] != req.body['password']) {
+    //   req.flash('error', '两次输入的口令不一致');
+    //   return res.redirect('/register');
+    // }
+    // var user = new User(req.body);
+    // user.save(function (err) {
+    //   if (err) {
+    //     console.log(err);
+    //     return res.redirect('/register');
+    //   }
+    //   return res.redirect('/');
+    // });
+  });
 
 router.get('/logout', function (req, res) {
   req.logout();

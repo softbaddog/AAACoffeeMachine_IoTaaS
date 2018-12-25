@@ -35,7 +35,8 @@ router.get('/', function (req, res, next) {
   Device.find({}, function (err, devices) {
     if (err) console.log(err);
     res.render('index', {
-      title: 'NOS Cafe',
+      // title: 'NOS Cafe',
+      title: 'Smoke Sensor',
       desc: 'Coffee Machines Dashboard',
       devices: devices
     });
@@ -111,35 +112,35 @@ router.post("/callback", (req, res, next) => {
     "Stand_By": "Stand By"
   };
   console.log(req.body);
-  Device.findOne({
-    deviceId: req.body.deviceId
-  }, function (err, doc) {
-    if (err) console.log(err);
+  // Device.findOne({
+  //   deviceId: req.body.deviceId
+  // }, function (err, doc) {
+  //   if (err) console.log(err);
 
-    switch (req.body.notifyType) {
-      case "deviceDataChanged":
-        if (req.body.service.data.rawData == "undefined") break;
-        let dataStr = Buffer.from(req.body.service.data.rawData, "base64").toString();
-        if (dataStr === "AAA") break;
-        console.log(statusMap[dataStr]);
-        if (statusMap[dataStr] !== "undefined") {
-          doc.meta.status = statusMap[dataStr];
-          doc.meta.updateAt = moment(req.body.service.eventTime).add(8, 'hours');
-          doc.save(function (err, updateDoc) {
-            if (err) console.log(err);
-            console.log(updateDoc);
-          });
-        }
-        myEmitter.emit("data", doc.meta);
-        break;
+    // switch (req.body.notifyType) {
+    //   case "deviceDataChanged":
+    //     if (req.body.service.data.rawData == "undefined") break;
+    //     let dataStr = Buffer.from(req.body.service.data.rawData, "base64").toString();
+    //     if (dataStr === "AAA") break;
+    //     console.log(statusMap[dataStr]);
+        // if (statusMap[dataStr] !== "undefined") {
+        //   doc.meta.status = statusMap[dataStr];
+        //   doc.meta.updateAt = moment(req.body.service.eventTime).add(8, 'hours');
+        //   doc.save(function (err, updateDoc) {
+        //     if (err) console.log(err);
+        //     console.log(updateDoc);
+        //   });
+        // }
+        // myEmitter.emit("data", doc.meta);
+        // break;
 
-      case "deviceAdded":
-        break;
+  //     case "deviceAdded":
+  //       break;
 
-      case "deviceDeleted":
-        break;
-    }
-  });
+  //     case "deviceDeleted":
+  //       break;
+  //   }
+  // });
 
   res.writeHead(200);
   res.end();

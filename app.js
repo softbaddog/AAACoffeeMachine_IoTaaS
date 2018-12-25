@@ -3,9 +3,10 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const session = require('express-session');
+const flash = require('connect-flash');
 const mongoose = require('mongoose');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
 
 const indexRouter = require('./routes/index');
 const productsRouter = require('./routes/products');
@@ -29,39 +30,6 @@ mongoose.connection.once('open', () => {
   dis.load();
 });
 
-passport.use('local', new LocalStrategy(
-  function (username, password, done) {
-    var user = {
-      id: '1',
-      username: 'admin',
-      password: 'admin'
-    }; // 可以配置通过数据库方式读取登陆账号
-
-    if (username !== user.username) {
-      return done(null, false, {
-        message: 'Incorrect username.'
-      });
-    }
-    if (password !== user.password) {
-      return done(null, false, {
-        message: 'Incorrect password.'
-      });
-    }
-
-    console.log(username, password);
-
-    return done(null, user);
-  }
-));
-
-passport.serializeUser(function (user, done) { //保存user对象
-  done(null, user); //可以通过数据库方式操作
-});
-
-passport.deserializeUser(function (user, done) { //删除user对象
-  done(null, user); //可以通过数据库方式操作
-});
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views/pages'));
 app.set('view engine', 'pug');
@@ -73,7 +41,17 @@ app.use(express.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(session({ secret: "cats" }));
+app.use(session({
+  secret: "cats",
+  resave: false,
+  saveUninitialized: false,
+  // store: new MongoStore({
+  //   mongooseConnection: mongoose.connection
+  // }),
+  cookie: {
+    maxAge: 180 * 60 * 1000
+  }
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 

@@ -1,5 +1,8 @@
 script(src="/socket.io/socket.io.js")
 script.
+  $(function(){
+      $('#mySwitch input').bootstrapSwitch();
+  });
   const socket = io();
   socket.on('data', function(obj) {
     location.reload();

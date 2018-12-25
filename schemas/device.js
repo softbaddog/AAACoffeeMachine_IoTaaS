@@ -20,6 +20,10 @@ var deviceSchema = new Schema({
     type: String,
     default: 0
   },
+  "userId": {
+    type: String,
+    default: 0
+  },
   "status": {
     type: String,
     default: "UNACTIVE"

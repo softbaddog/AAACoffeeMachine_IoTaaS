@@ -4,14 +4,18 @@ block content
   .container
     .row
       .col-md-4
-        form
+        form(action="/register", role="form", method="POST")
+          if hasError
+            .class="alert alert-danger"
+              each item in messages
+                p= item
           .form-group
-            label(for='email') Username:
-            input.form-control(type='text',name='email')
+            label(for='username') Username:
+            input.form-control#username(type='text',name='username' placeholder="Please input your name" required)
           .form-group
-            label(for='pwd') Password:
-            input.form-control(type="password",name='pwd')
+            label(for='password') Password:
+            input.form-control#password(type="password" name='password' placeholder="Please input password" required)
           .form-group
-            label(for='pwd') Confirm Password:
-            input.form-control(type="password",name='password-repeat')
-          button.btn.btn-primary(type="submit") Signup
+            label(for='password-repeat') Confirm Password:
+            input.form-control#password-repeat(type="password",name='password-repeat' placeholder="Please input password again" required)
+          button.btn.btn-primary(type="submit") Register
