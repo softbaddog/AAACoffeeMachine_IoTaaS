@@ -78,32 +78,34 @@ router.get('/huaweicloud', function (req, res) {
   // console.log(ivPwd + signPwd);
 
   console.log(username, password);
-  User.register(new User({
+  User.deleteOne({
     username: username
-  }), password, function (err, user) {
-    if (err) {
-      console.log(err);
-    }
-
-    const body = {
-      resultCode: "000000",
-      resultMsg: "success.",
-      instanceId: user.id,
-      encryptType: "2",
-      appInfo: {
-        frontEndUrl: "https://softbaddog.oicp.vip",
-        adminUrl: "https://softbaddog.oicp.vip",
-        userName: ivUser + signUser,
-        password: ivPwd + signPwd
+  }, function (err) {
+    User.register(new User({
+      username: username
+    }), password, function (err, user) {
+      if (err) {
+        console.log(err);
       }
-    };
-    const hmac = crypto.createHmac('sha256', key);
-    var up = hmac.update(JSON.stringify(body));
-    var result = up.digest('base64');
-    res.setHeader("Body-Sign", 'sign_type="HMAC-SHA256", signature="' + result + '"');
-    res.json(body);
+      const body = {
+        resultCode: "000000",
+        resultMsg: "success.",
+        instanceId: user.id,
+        encryptType: "2",
+        appInfo: {
+          frontEndUrl: "https://softbaddog.oicp.vip",
+          adminUrl: "https://softbaddog.oicp.vip",
+          userName: ivUser + signUser,
+          password: ivPwd + signPwd
+        }
+      };
+      const hmac = crypto.createHmac('sha256', key);
+      var up = hmac.update(JSON.stringify(body));
+      var result = up.digest('base64');
+      res.setHeader("Body-Sign", 'sign_type="HMAC-SHA256", signature="' + result + '"');
+      res.json(body);
+    });
   });
-
 });
 
 module.exports = router;

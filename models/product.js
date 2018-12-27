@@ -3,7 +3,10 @@ const Schema = mongoose.Schema;
 
 const Product = new Schema({
   deviceType: String,
-  productId: String,
+  productId: {
+    type: String,
+    default: 0
+  },
   manufacturerId: String,
   manufacturerName: String,
   model: String,

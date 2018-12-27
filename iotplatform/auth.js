@@ -24,7 +24,6 @@ const options = (mode) => {
       cert: cfg.cert,
       key: cfg.key,
       body: {
-        clientType: 'app',
         key: cfg.appId,
         secret: cfg.secret
       },

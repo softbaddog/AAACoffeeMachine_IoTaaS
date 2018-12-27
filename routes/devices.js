@@ -13,6 +13,7 @@ const myEmitter = require('../MyEmitter');
 const moment = require('moment');
 
 myEmitter.on('data', (data) => {
+  if (cfg.mode !== 'basic') return;
   var idx;
   var d = JSON.parse(data.toString());
   var hasRawData = d.services.some(function (elem, index) {
@@ -20,13 +21,13 @@ myEmitter.on('data', (data) => {
     return elem.serviceId == 'RawData';
   });
   if (hasRawData) {
-    r = JSON.parse(d.services[idx].data.rawData);
     Record.create({
       deviceId: d.deviceId,
-      method: r.method,
-      data: r.data,
+      method: 'keep-alive',
+      data: JSON.stringify(d.services[idx].data),
       eventTime: d.eventTime
     });
+    console.log(d.services[idx]);
   }
 });
 
@@ -94,52 +95,33 @@ router.post("/cmd/:id", (req, res, next) => {
 
 // Bind a new device with a readable name, and obtain a deviceId generated in OceanConnect Platform
 router.post("/callback", (req, res, next) => {
-  var statusMap = {
-    "Keep_Alive": "Connected",
-    "Machine_Open": "Power On",
-    "Machine_Close": "Power Off",
-    "Machine_Preheat": "Pre heating",
-    "Machine_Preheat_Finished": "Finished pre heating",
-    "Smallcup_Coffee_Working_Status": "Working Status",
-    "Bigcup_Coffee_Working_Status": "Working Status",
-    "Teacup_Coffee_Working_Status": "Working Status",
-    "Galao_Coffee_Working_Status": "Working Status",
-    "Cappuccino_Coffee_Working_Status": "Working Status",
-    "Clean_water_Working_Status": "Working Status",
-    "Custom_Coffee_Working_Status": "Working Status",
-    "Descaling": "Descaling",
-    "Stand_By": "Stand By"
-  };
   console.log(req.body);
-  // Device.findOne({
-  //   deviceId: req.body.deviceId
-  // }, function (err, doc) {
-  //   if (err) console.log(err);
+  Device.findOne({
+    deviceId: req.body.deviceId
+  }, function (err, doc) {
+    if (!err) {
+      switch (req.body.notifyType) {
+        case "deviceDataChanged":
+          // var buf = Buffer.from(req.body.service.data.rawData, 'base64');
+          Record.create({
+            deviceId: doc.deviceId,
+            method: 'keep-alive',
+            data: JSON.stringify(req.body.service.data),
+            eventTime: req.body.service.eventTime
+          }, function (err, doc) {
+            if (err) console.log(err);
+            myEmitter.emit('data', doc.data);
+          });
+          break;
 
-    // switch (req.body.notifyType) {
-    //   case "deviceDataChanged":
-    //     if (req.body.service.data.rawData == "undefined") break;
-    //     let dataStr = Buffer.from(req.body.service.data.rawData, "base64").toString();
-    //     if (dataStr === "AAA") break;
-    //     console.log(statusMap[dataStr]);
-        // if (statusMap[dataStr] !== "undefined") {
-        //   doc.meta.status = statusMap[dataStr];
-        //   doc.meta.updateAt = moment(req.body.service.eventTime).add(8, 'hours');
-        //   doc.save(function (err, updateDoc) {
-        //     if (err) console.log(err);
-        //     console.log(updateDoc);
-        //   });
-        // }
-        // myEmitter.emit("data", doc.meta);
-        // break;
+        case "deviceAdded":
+          break;
 
-  //     case "deviceAdded":
-  //       break;
-
-  //     case "deviceDeleted":
-  //       break;
-  //   }
-  // });
+        case "deviceDeleted":
+          break;
+      }
+    }
+  });
 
   res.writeHead(200);
   res.end();

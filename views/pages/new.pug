@@ -1,0 +1,27 @@
+extends ../layout
+
+block content
+  .container
+    .row
+      .col-md-4
+        form.form-horizontal(method="POST", action="/products/new")
+          input(name='product[_id]', type="hidden", value=product._id)
+          .form-group
+            label(for='inputManufacturerId') ManufacturerId
+            input#inputManufacturerId.form-control(name='product[manufacturerId]',type='text',value=product.manufacturerId)
+          .form-group
+            label(for='inputManufacturerName') ManufacturerName
+            input#inputManufacturerName.form-control(name='product[manufacturerName]',type='text',value=product.manufacturerName)
+          .form-group
+            label(for='inputDeviceType') DeviceType
+            input#inputDeviceType.form-control(name='product[deviceType]',type='text',value=product.DeviceType)
+          .form-group
+            label(for='inputModel') Model
+            input#inputModel.form-control(name='product[model]',type='text',value=product.model)
+          .form-group
+            label(for='inputProtocolType') ProtocolType
+            select#inputProtocolType.form-control(name='product[protocolType]',type='text',value=product.protocolType)
+              option(value='CoAP') CoAP
+              option(value='MQTT') MQTT
+
+          button.btn.btn-primary(type = 'submit') Submit

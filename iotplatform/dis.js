@@ -6,8 +6,12 @@ var myEmitter = require('../MyEmitter');
 const AK = "VWJDXW10MCBENASKJRW0";
 const SK = "2HuetFIl9wWrBdpuoykTnnrHgGteyeUMtST4AXME";
 const projectid = "70e38da67ab64bff9f434a026e25adc3";
-const region = "cn-north-1";
 const streamName = "dis-4mvu";
+// const AK = "WDPFYNDGIX2YQBWJYPAX";
+// const SK = "MrOE6M1E2GcMvJLrMyyr0utWDCO3lcBqzbnBTI5p";
+// const projectid = "f7d55a9d45744c38a176c483ef926253";
+// const streamName = "dis-KOjm";
+const region = "cn-north-1";
 const Host = 'dis.cn-north-1.myhuaweicloud.com:20004';
 
 const partitionId = 0;
@@ -44,7 +48,7 @@ function getRecords(partition_cursor) {
   var recordsOptions = options(recordsHTTPRequestMethod, recordsCanonicalURI, recordsCanonicalQuery);
   request(recordsOptions, function (error, res, body) {
     if (!error && res.statusCode == 200) {
-      console.log(body);
+      // console.log(body);
       if (body.records.length > 0) {
         for (let record of body.records) {
           myEmitter.emit('data', Buffer.from(record.data, 'base64'));

@@ -2,7 +2,7 @@ var request = require('request');
 var cfg = require('./config');
 
 var deviceInfo = {
-  manufacturerId: '39129ce1-aab6-4142-8393-64b33b92d798',
+  manufacturerId: 'HuaweiDemoID',
   manufacturerName: 'HuaweiDemo',
   deviceType: 'Base64Demo',
   model: 'Base64',
@@ -47,6 +47,7 @@ const createOptions = (loginInfo, nodeId, productId) => {
         'ownerAppId': cfg.appId
       },
       body: {
+        'name': 'xxx',
         'productId': productId,
         'nodeId': nodeId,
         'timeout': 0
@@ -61,7 +62,7 @@ const createOptions = (loginInfo, nodeId, productId) => {
 exports.registerDevice = (loginInfo, nodeId, productId) => {
   return new Promise((resolve, reject) => {
     request(createOptions(loginInfo, nodeId, productId), (err, res, body) => {
-      console.log(res.body);
+      console.log(body);
       if (!err && res.statusCode === 200) {
         resolve(body.deviceId);
       } else {
@@ -123,10 +124,25 @@ exports.deleteDevice = (loginInfo, deviceId) => {
   });
 };
 
-// Query a device's status
-exports.statusDevice = (loginInfo, deviceId) => {
-  return new Promise((resolve, reject) => {
-    var options = {
+const statusOptions = (loginInfo, deviceId) => {
+  if (cfg.mode == 'old') {
+    return {
+      method: 'GET',
+      url: url + '/iocm/app/reg/v1.1.0/deviceCredentials/' + deviceId,
+      cert: cfg.cert,
+      key: cfg.key,
+      headers: {
+        'app_key': cfg.appId,
+        'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
+      },
+      qs: {
+        'appId': cfg.appId
+      },
+      strictSSL: false,
+      json: true
+    };
+  } else {
+    return {
       method: 'GET',
       url: url + '/api/v3.0/devices/' + deviceId + '/status',
       cert: cfg.cert,
@@ -142,12 +158,24 @@ exports.statusDevice = (loginInfo, deviceId) => {
       strictSSL: false,
       json: true
     };
-    request(options, (err, res, body) => {
+  }
+};
+
+// Query a device's status
+exports.statusDevice = (loginInfo, deviceId) => {
+  return new Promise((resolve, reject) => {
+    request(statusOptions(loginInfo, deviceId), (err, res, body) => {
       console.log(body);
       if (!err) {
-        resolve({
-          status: body.status
-        });
+        if (cfg.mode == 'old') {
+          resolve({
+            status: body.activated ? 'ACTIVE' : 'UNACTIVE'
+          });
+        } else {
+          resolve({
+            status: body.status
+          });
+        }
       } else {
         console.log(err);
       }
