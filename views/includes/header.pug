@@ -5,18 +5,22 @@
   else
     p You are currently logged in as #{user.username}
 
-  ul.nav
+  ul.nav.nav-tabs
+    li.nav-item
+      a.nav-link(href="/") Home
     if (!user)
       li.nav-item
         a.nav-link(href="/login") Login
-      li.nav-item
-        a.nav-link(href="/") Home
     if (user)
+      li.nav-item.dropdown
+        a.nav-link.dropdown-toggle(data-toggle="dropdown" href="/products") Product
+        .dropdown-menu
+          a.dropdown-item(href="/product/new") New
+          a.dropdown-item(href="/product/list") List
+      li.nav-item.dropdown
+        a.nav-link.dropdown-toggle(data-toggle="dropdown" href="/devices") Device
+        .dropdown-menu
+          a.dropdown-item(href="/device/new") New
+          a.dropdown-item(href="/device/list") List
       li.nav-item
         a.nav-link(href="/logout") Logout
-      li.nav-item
-        a.nav-link(href="/products") Product
-      li.nav-item
-        a.nav-link(href="/admin/list") Admin
-      li.nav-item
-        a.nav-link(href="/admin/new") New

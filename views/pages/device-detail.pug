@@ -18,7 +18,7 @@ block content
             //- button.btn.btn-outline-primary.btn-block(type="button", data-toggle="modal", data-target="#confModal") Configuration
           .col-md-3
             //- button.btn.btn-outline-primary.btn-block(type="button", data-toggle="modal", data-target="#operModal") Operation
-            form.form-horizontal(action="/devices/cmd/" + device._id, role="form", method="POST" onsubmit="return")
+            form.form-horizontal(action="/device/cmd/" + device._id, role="form", method="POST" onsubmit="return")
               .modal.fade#confModal
                 .modal-dialog.modal-md
                   .modal-content

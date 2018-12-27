@@ -45,7 +45,7 @@ app.use(express.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-passport.use(new LocalStrategy(User.authenticate()));
+passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 app.use(require('express-session')({
@@ -59,8 +59,8 @@ app.use(passport.session());
 app.locals.moment = require('moment');
 
 app.use('/', indexRouter);
-app.use('/products', productsRouter);
-app.use('/devices', devicesRouter);
+app.use('/product', productsRouter);
+app.use('/device', devicesRouter);
 app.use('/admin', adminRouter);
 
 auth.fetchAccessToken(cfg.mode).then((loginInfo) => {

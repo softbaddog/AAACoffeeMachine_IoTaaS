@@ -48,7 +48,7 @@ function getRecords(partition_cursor) {
   var recordsOptions = options(recordsHTTPRequestMethod, recordsCanonicalURI, recordsCanonicalQuery);
   request(recordsOptions, function (error, res, body) {
     if (!error && res.statusCode == 200) {
-      // console.log(body);
+      console.log(body);
       if (body.records.length > 0) {
         for (let record of body.records) {
           myEmitter.emit('data', Buffer.from(record.data, 'base64'));

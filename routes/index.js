@@ -21,18 +21,18 @@ router.get('/', function (req, res, next) {
 router.get('/register', function (req, res, next) {
   res.render('register', {
     title: 'Smoke Sensors',
-    desc: 'Register Page',
-    hasError: false,
-    messages: []
+    desc: 'Register Page'
   });
 });
 
 router.post('/register', function (req, res) {
   User.register(new User({
-    username: req.body.username
+    username: req.body.username,
+    active: false
   }), req.body.password, function (err, user) {
     if (err) {
       return res.render('register', {
+        error: err,
         user: user
       });
     }
@@ -49,9 +49,11 @@ router.get('/login', function (req, res, next) {
   });
 });
 
-router.post('/login', passport.authenticate('local'), function (req, res) {
-  res.redirect('/');
-});
+router.post('/login',
+  passport.authenticate('local'),
+  function (req, res) {
+    res.redirect('/');
+  });
 
 router.get('/logout', function (req, res) {
   req.logout();
@@ -82,7 +84,8 @@ router.get('/huaweicloud', function (req, res) {
     username: username
   }, function (err) {
     User.register(new User({
-      username: username
+      username: username,
+      active: true
     }), password, function (err, user) {
       if (err) {
         console.log(err);

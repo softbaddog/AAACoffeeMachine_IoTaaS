@@ -7,13 +7,15 @@ const pm = require('../iotplatform/pm');
 const cfg = require('../iotplatform/config');
 
 /* GET products listing. */
-router.get('/', function (req, res, next) {
+router.get('/list', function (req, res, next) {
+  if (!req.user)  res.redirect('/login');
+
   if (cfg.mode == 'basic') {
     let pageNo = parseInt(req.query.pageNo) || 0;
     let pageSize = parseInt(req.query.pageSize) || 10;
     pm.getProducts(auth.loginInfo, pageNo, pageSize)
       .then(data => {
-        res.render('product', {
+        res.render('product-list', {
           title: 'Smoke Sensors',
           desc: 'Product Page',
           user: req.user,
@@ -40,7 +42,9 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/new', function (req, res, next) {
-    res.render('new', {
+    if (!req.user)  res.redirect('/login');
+
+    res.render('product-new', {
       title: 'NOS Cafe Admin',
       desc: 'Add a new Product',
       user: req.user,
@@ -70,7 +74,7 @@ router.post('/new', function (req, res, next) {
         if (err) {
           console.log(err);
         } else {
-          res.redirect('/admin/list');
+          res.redirect('/product/list');
         }
       });
     });

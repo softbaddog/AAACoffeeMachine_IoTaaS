@@ -6,7 +6,7 @@ block content
       each item in devices
         .col-md-4
           .card
-            a.card-img-top(href="/devices/" + item._id)
+            a.card-img-top(href="/device/" + item._id)
               img(src="/img/AlphaSmoke.png", alt="item.nodeName")
             .card-body
               h4.card-title= item.nodeName
@@ -14,4 +14,4 @@ block content
               pre.card-text
                 | IMEI: #{item.nodeId} 
                 | Last Updated: #{moment(item.meta.updatedAt).format('YYYY/MM/DD HH:mm:ss')}
-              a.btn.btn-primary(href="/devices/" + item._id) See Profile
+              a.btn.btn-primary(href="/device/" + item._id) See Profile

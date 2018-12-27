@@ -17,18 +17,18 @@ block content
           each item in devices
             tr(class='item-id-' + item._id, style="word-break:break-all")
               td 
-                a(target='_self', href='/devices/' + item._id) #{item.nodeName}
+                a(target='_self', href='/device/' + item._id) #{item.nodeName}
               td #{item.nodeId}
               td #{moment(item.meta.createdAt).format('YYYY/MM/DD HH:mm:ss')}
               td 
-                a(target='_self', href='/admin/list?id=' + item._id) #{item.status}
+                a(target='_self', href='/device/list?id=' + item._id) #{item.status}
               td
                 if item.deviceId == 0
-                  a.btn.btn-sm.btn-success(role='button', target='_self', href='/admin/bind/'+item._id) Bind
+                  a.btn.btn-sm.btn-success(role='button', target='_self', href='/device/bind/'+item._id) Bind
                 else
-                  a.btn.btn-sm.btn-warning(role='button', target='_self', href='/admin/unbind/'+item._id) Unbind
+                  a.btn.btn-sm.btn-warning(role='button', target='_self', href='/device/unbind/'+item._id) Unbind
               td
-                a.btn.btn-sm.btn-info(roel='button', target='_self', href='/admin/update/' + item._id) Update
+                a.btn.btn-sm.btn-info(roel='button', target='_self', href='/device/update/' + item._id) Update
               td
                 button.btn.btn-sm.btn-danger.del(type='button', data-id=item._id) Delete
   script(src='/js/admin.js')
