@@ -1,27 +1,14 @@
+var data = `82a66d6574686f64a96f7065726174696f6ea46461746181a46865616401`;
 
-var data = `{
-	"method": "keep-alive",
-	"data": {
-		"version": 0.1,
-		"mode": 100,
-		"timestamp": "1970-01-01 00:00:00 UTC",
-		"params": {
-			"IMSI": "8618912345678",
-			"RSRP": -140,
-			"ECL": 0,
-			"SNR": 30,
-			"CellID": 124481105
-		}
-	}
-}`;
+var buf = Buffer.from(data,'hex');
+console.log(buf.toString('base64'));
 
-// var buf = Buffer.from(data);
 
-// var temp = "";
-// for (const b of buf) {
-//   temp += b.toString(16) + " ";
-// }
+// // var temp = "";
+// // for (const b of buf) {
+// //   temp += b.toString(16) + " ";
+// // }
 
-var json = JSON.parse(data);
+// var json = JSON.parse(data);
 
-console.log(JSON.stringify(json));
+// console.log(JSON.stringify(json));

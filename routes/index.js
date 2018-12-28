@@ -28,6 +28,7 @@ router.get('/register', function (req, res, next) {
 router.post('/register', function (req, res) {
   User.register(new User({
     username: req.body.username,
+    initPwd: Buffer.from(req.body.password).toString('base64'),
     active: false
   }), req.body.password, function (err, user) {
     if (err) {

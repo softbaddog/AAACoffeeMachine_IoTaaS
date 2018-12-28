@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const _ = require('underscore');
 const Product = require('../models/product');
 const auth = require('../iotplatform/auth');
 const pm = require('../iotplatform/pm');
 const cfg = require('../iotplatform/config');
+
+const _ = require('underscore');
 
 /* GET products listing. */
 router.get('/list', function (req, res, next) {
@@ -30,7 +31,7 @@ router.get('/list', function (req, res, next) {
       });
   } else {
     Product.find({}, function (err, docs) {
-      res.render('product', {
+      res.render('product-list', {
         title: 'Smoke Sensors',
         desc: 'Product Page',
         user: req.user,
@@ -90,7 +91,7 @@ router.post('/new', function (req, res, next) {
       if (err) {
         console.log(err);
       } else {
-        res.redirect('/products');
+        res.redirect('/product/list');
       }
     });
   }
@@ -101,7 +102,7 @@ router.get('/delete/:id', function (req, res, next) {
     if (err) {
       console.log(err);
     } else {
-       res.redirect('/');
+       res.redirect('/product/list');
     }
   });
 });

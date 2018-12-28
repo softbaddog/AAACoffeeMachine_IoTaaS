@@ -4,6 +4,7 @@ const passportLocalMongoose = require('passport-local-mongoose');
 const moment = require('moment');
 
 const User = new Schema({
+	initPwd: String,
 	active: Boolean,
 	expireTime: {
 		type: String,

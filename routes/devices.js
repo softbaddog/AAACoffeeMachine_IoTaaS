@@ -5,13 +5,13 @@ const Product = require('../models/product');
 const Device = require('../models/device');
 const Record = require('../models/record');
 const cfg = require('../iotplatform/config');
-
 const auth = require('../iotplatform/auth');
 const dm = require('../iotplatform/dm');
 const cmd = require('../iotplatform/cmd');
 
 const myEmitter = require('../MyEmitter');
 const moment = require('moment');
+const _ = require('underscore');
 
 myEmitter.on('data', (data) => {
   if (cfg.mode !== 'basic') return;
@@ -34,6 +34,8 @@ myEmitter.on('data', (data) => {
 
 // GET devices listing
 router.get('/list', function (req, res, next) {
+  if (!req.user) res.redirect('/login');
+
   var id = req.query.id;
   var user = req.user;
   if (id) {
@@ -75,6 +77,8 @@ router.get('/list', function (req, res, next) {
 
 // Update a device
 router.get('/update/:id', function (req, res, next) {
+  if (!req.user) res.redirect('/login');
+
   var id = req.params.id;
   if (id) {
     Device.findById(id, function (err, device) {
@@ -93,6 +97,8 @@ router.get('/update/:id', function (req, res, next) {
 
 // Create a device
 router.get('/new', function (req, res, next) {
+  if (!req.user) res.redirect('/login');
+
   Product.find({}, function (err, docs) {
     res.render('device-new', {
       title: 'NOS Cafe Admin',
@@ -147,6 +153,8 @@ router.post('/new', function (req, res, next) {
 
 // Delete a device
 router.delete('/list', function (req, res, next) {
+  if (!req.user) res.redirect('/login');
+
   Device.findByIdAndRemove(req.query.id, function (err, device) {
     if (err) {
       console.log(err);
@@ -166,10 +174,14 @@ router.get("/bind/:id", (req, res, next) => {
         doc.deviceId = deviceId;
         doc.save(function (err) {
           if (cfg.mode !== "basic") {
-            dm.updateDevice(auth.loginInfo, deviceId, doc.nodeName)
-              .then(data => {
-                res.redirect('/device/list');
-              });
+            Product.findOne({
+              productId: doc.productId
+            }, function (err, product) {
+              dm.updateDevice(auth.loginInfo, deviceId, doc.nodeName, product)
+                .then(data => {
+                  res.redirect('/device/list');
+                });
+            });
           } else {
             res.redirect('/device/list');
           }
@@ -195,30 +207,58 @@ router.get("/unbind/:id", (req, res, next) => {
 
 // GET device detail
 router.get('/:id', function (req, res, next) {
-  if (!req.user) redirect('/login');
+  console.log(req.user);
+  if (!req.user) res.redirect('/');
 
   let method = req.query.method || "keep-alive";
   Device.findById(req.params.id, function (err, device) {
-    if (req.user.username != 'admin' &&
+    if (req.user && req.user.username != 'admin' &&
       device.userId != req.user._id) {
       console.log(device.userId, req.user._id);
       res.redirect('/');
     }
 
-    Record.find({
+    Record.findOne({
       deviceId: device.deviceId,
       method: method
-    }, function (err, docs) {
-      res.render('device-detail', {
-        title: device.nodeName,
-        desc: 'Smoke Sensors Details',
-        user: req.user,
-        device: device,
-        total: docs.length,
-        records: docs
-      });
+    }, function (err, doc) {
+      console.log(doc);
+      if (!err && doc) {
+        res.render('device-detail', {
+          title: device.nodeName,
+          desc: 'Smoke Sensors Details',
+          user: req.user,
+          device: device,
+          record: doc.data
+        });
+      } else {
+        res.render('device-detail', {
+          title: device.nodeName,
+          desc: 'Smoke Sensors Details',
+          user: req.user,
+          device: device,
+          record: ''
+        });
+      }
+    }).limit(1).sort({
+      _id: -1
     });
   });
+});
+
+router.put("/cmd/:id", (req, res, next) => {
+  console.log(req.params.id, req.query);
+  res.json({
+    success: 1
+  });
+  
+  // Device.findById(req.params.id, function (err, doc) {
+  //   cmd.deviceCommandsBasic(auth.loginInfo, doc.deviceId, data).then(data => {
+  //     if (err) {
+  //       console.log(err);
+  //     }
+  //   });
+  // });
 });
 
 // Send a Command
@@ -228,11 +268,6 @@ router.post("/cmd/:id", (req, res, next) => {
     let data = "";
     if (req.body.StandbyTime !== '') {
       data = "Stand_By_Time " + req.body.StandbyTime;
-    } else if (req.body.PowerOn != 2) {
-      if (req.body.PowerOn == 1)
-        data = "Machine_ON";
-      else
-        data = "Machine_OFF";
     } else if (req.body.WaterUsage !== '') {
       data = "Custom_Coffee " + req.body.WaterUsage;
     }
@@ -255,32 +290,58 @@ router.post("/cmd/:id", (req, res, next) => {
 // Bind a new device with a readable name, and obtain a deviceId generated in OceanConnect Platform
 router.post("/callback", (req, res, next) => {
   console.log(req.body);
-  Device.findOne({
-    deviceId: req.body.deviceId
-  }, function (err, doc) {
-    if (!err) {
-      switch (req.body.notifyType) {
-        case "deviceDataChanged":
-          // var buf = Buffer.from(req.body.service.data.rawData, 'base64');
-          Record.create({
-            deviceId: doc.deviceId,
-            method: 'keep-alive',
-            data: JSON.stringify(req.body.service.data),
-            eventTime: req.body.service.eventTime
-          }, function (err, doc) {
-            if (err) console.log(err);
-            myEmitter.emit('data', doc.data);
-          });
-          break;
+  if (req.body.deviceId) {
+    Device.findOne({
+      deviceId: req.body.deviceId
+    }, function (err, doc) {
+      if (!err && doc) {
+        let data;
+        let method;
+        let msg;
+        switch (req.body.notifyType) {
+          case "deviceDataChanged":
+            switch (cfg.encode) {
+              case 'default':
+                data = JSON.stringify(req.body.service.data);
+                method = 'keep-alive';
+                break;
 
-        case "deviceAdded":
-          break;
+              case 'base64':
+                var buf = Buffer.from(req.body.service.data.rawData, 'base64').toString();
+                msg = JSON.parse(buf);
+                method = msg.method;
+                data = JSON.stringify(msg.data);
+                break;
 
-        case "deviceDeleted":
-          break;
+              case 'msgpack':
+                msg = msgpack.decode(Buffer.from(req.body.service.data.rawData, 'base64'));
+                method = msg.method;
+                data = JSON.stringify(msg.data);
+                break;
+
+              default:
+                break;
+            }
+            Record.create({
+              deviceId: doc.deviceId,
+              method: method,
+              data: data,
+              eventTime: req.body.service.eventTime
+            }, function (err, doc) {
+              if (err) console.log(err);
+              myEmitter.emit('data', doc.data);
+            });
+            break;
+
+          case "deviceAdded":
+            break;
+
+          case "deviceDeleted":
+            break;
+        }
       }
-    }
-  });
+    });
+  }
 
   res.writeHead(200);
   res.end();

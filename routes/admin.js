@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const _ = require('underscore');
+
 const Product = require('../models/product');
 const Device = require('../models/device');
 

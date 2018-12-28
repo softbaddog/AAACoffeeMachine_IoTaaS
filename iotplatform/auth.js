@@ -3,7 +3,7 @@ const cfg = require('./config');
 
 const url = 'https://' + cfg.host + ':' + cfg.port;
 
-const options = (mode) => {
+const loginOptions = (mode) => {
   if (mode == 'old') {
     return {
       method: 'POST',
@@ -36,7 +36,7 @@ const options = (mode) => {
 // fetch accessToken when longin, and update before timeout
 exports.fetchAccessToken = (mode) => {
   return new Promise((resolve, reject) => {
-    request(options(mode), (err, res, body) => {
+    request(loginOptions(mode), (err, res, body) => {
       if (err) console.log(err);
       if (res.statusCode === 200) {
         exports.loginInfo = body;
@@ -51,4 +51,20 @@ exports.fetchAccessToken = (mode) => {
       }
     });
   });
+};
+
+const logoutOptions = (mode, loginInfo) => {
+  if (mode == 'old') {
+    return {
+      method: 'POST',
+      url: url + '/iocm/app/sec/v1.1.0/logout',
+      cert: cfg.cert,
+      key: cfg.key,
+      body: {
+        accessToken: loginInfo.accessToken
+      },
+      strictSSL: false,
+      json: true
+    };
+  }
 };

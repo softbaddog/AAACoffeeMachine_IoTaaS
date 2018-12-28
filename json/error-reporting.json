@@ -1,8 +1,7 @@
 {
 	"method": "error-reporting",
 	"data": {
-		"error-id": 1000,
-		"mode": 0,
-		"error-code": 1
+		"code": 0,
+		"mode": 1
 	}
 }

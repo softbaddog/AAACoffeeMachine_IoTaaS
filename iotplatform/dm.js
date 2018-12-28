@@ -1,13 +1,13 @@
 var request = require('request');
 var cfg = require('./config');
 
-var deviceInfo = {
-  manufacturerId: 'HuaweiDemoID',
-  manufacturerName: 'HuaweiDemo',
-  deviceType: 'Base64Demo',
-  model: 'Base64',
-  protocolType: 'CoAP'
-};
+// var deviceInfo = {
+//   manufacturerId: 'HuaweiDemoID',
+//   manufacturerName: 'HuaweiDemo',
+//   deviceType: 'Base64Demo',
+//   model: 'Base64',
+//   protocolType: 'CoAP'
+// };
 
 const url = 'https://' + cfg.host + ':' + cfg.port;
 
@@ -184,7 +184,7 @@ exports.statusDevice = (loginInfo, deviceId) => {
 };
 
 // Update a device
-exports.updateDevice = (loginInfo, deviceId, deviceName) => {
+exports.updateDevice = (loginInfo, deviceId, deviceName, product) => {
   return new Promise((resolve, reject) => {
     var options = {
       method: 'PUT',
@@ -200,11 +200,11 @@ exports.updateDevice = (loginInfo, deviceId, deviceName) => {
       },
       body: {
         name: deviceName,
-        manufacturerId: deviceInfo.manufacturerId,
-        manufacturerName: deviceInfo.manufacturerName,
-        deviceType: deviceInfo.deviceType,
-        model: deviceInfo.model,
-        protocolType: deviceInfo.protocolType
+        manufacturerId: product.manufacturerId,
+        manufacturerName: product.manufacturerName,
+        deviceType: product.deviceType,
+        model: product.model,
+        protocolType: product.protocolType
       },
       strictSSL: false,
       json: true

@@ -77,12 +77,12 @@ function options(HTTPRequestMethod, CanonicalURI, CanonicalQuery) {
   const hashCanonicalRequest = crypto.createHash('sha256');
   const HashedCanonicalRequest = hashCanonicalRequest.update(CanonicalRequest).digest('hex');
 
-  var CredentialScope = moment(x_sdk_date).format('YYYYMMDD') + '/' + region + '/dis/sdk_request';
+  var CredentialScope = moment(x_sdk_date).utc().format('YYYYMMDD') + '/' + region + '/dis/sdk_request';
   var StringToSing = 'SDK-HMAC-SHA256' + '\n' + x_sdk_date + '\n' + CredentialScope + '\n' + HashedCanonicalRequest;
 
   var kSecret = "SDK" + SK;
   var hmacDate = crypto.createHmac('sha256', kSecret);
-  var kDate = hmacDate.update(moment(x_sdk_date).format('YYYYMMDD')).digest('hex');
+  var kDate = hmacDate.update(moment(x_sdk_date).utc().format('YYYYMMDD')).digest('hex');
   var hmacRegion = crypto.createHmac('sha256', Buffer.from(kDate, 'hex'));
   var kRegion = hmacRegion.update(region).digest('hex');
   var hmacService = crypto.createHmac('sha256', Buffer.from(kRegion, 'hex'));
@@ -100,7 +100,7 @@ function options(HTTPRequestMethod, CanonicalURI, CanonicalQuery) {
       'Content-Type': 'application/json',
       'Host': Host,
       'X-Sdk-Date': x_sdk_date,
-      'Authorization': 'SDK-HMAC-SHA256 Credential=' + AK + '/' + moment(x_sdk_date).format('YYYYMMDD') + '/' + region + '/dis/sdk_request' +
+      'Authorization': 'SDK-HMAC-SHA256 Credential=' + AK + '/' + moment(x_sdk_date).utc().format('YYYYMMDD') + '/' + region + '/dis/sdk_request' +
         ', SignedHeaders=' + SignedHeaders + ', Signature=' + Signature,
 
     },

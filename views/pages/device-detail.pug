@@ -5,19 +5,22 @@ block content
     .row
       .col-md-4
         .card
-          img.card-img-top(src="/img/AlphaSmoke.png", alt="item.nodeName")
+          img.card-img-top(src="/img/DeltaCafe.png", alt="item.nodeName")
           .card-body
             .card-title
               p.text-center.text-success= device.status
             .form-group.text-center
-              .switch.switch-mini#mySwitch
-                input.form-control#inputSwitch(type='checkbox' checked data-on-text='ON' data-off-text='OFF' name='operation[power]')
+              .switch.switch-large#mySwitch
+                if device.status == 'ACTIVE'
+                  input(type='checkbox' name='inputSwitch' data-id=device._id data-on-text='ON' data-off-text='OFF' checked)
+                else
+                  input(type='checkbox' name='inputSwitch' data-id=device._id data-on-text='ON' data-off-text='OFF' disabled)
       .col-md-8
         .row
           .col-md-3
-            //- button.btn.btn-outline-primary.btn-block(type="button", data-toggle="modal", data-target="#confModal") Configuration
+            button.btn.btn-outline-primary.btn-block(type="button", data-toggle="modal", data-target="#confModal") Configuration
           .col-md-3
-            //- button.btn.btn-outline-primary.btn-block(type="button", data-toggle="modal", data-target="#operModal") Operation
+            button.btn.btn-outline-primary.btn-block(type="button", data-toggle="modal", data-target="#operModal") Operation
             form.form-horizontal(action="/device/cmd/" + device._id, role="form", method="POST" onsubmit="return")
               .modal.fade#confModal
                 .modal-dialog.modal-md
@@ -75,10 +78,56 @@ block content
               a.list-group-item.list-group-item-action(href="?method=machine-operating") Machine Operation
               a.list-group-item.list-group-item-action(href="?method=error-reporting") Error Reporting
           .col-md-9
-            each item in records
-              p #{item.data}
-            //- - var n = 0;
-            //- ul.pagination
-            //-   while n < total / 10
-            //-     li.page-item
-            //-       a.page-link(href="?pageNo=" + n)= n++
+            p #{record}
+        //- .row
+        //-   .col-md-3
+        //-     canvas(data-type="linear-gauge"
+        //-             data-width="160"
+        //-             data-height="460"
+        //-             data-border-radius="20"
+        //-             data-borders="true"
+        //-             data-bar-stroke-width="20"
+        //-             data-minor-ticks="10"
+        //-             data-major-ticks="0,10,20,30,40,50,60"
+        //-             data-color-numbers="red,green,blue,transparent,#ccc,#ccc,#ccc"
+        //-             data-color-major-ticks="red,green,blue,transparent,#ccc,#ccc,#ccc"
+        //-             data-color-bar-stroke="#444"
+        //-             data-value=record.BatteryLevel
+        //-             data-units="°C"
+        //-             data-color-value-box-shadow="false"
+        //-             data-tick-side="left"
+        //-             data-number-side="left"
+        //-             data-needle-side="left"
+        //-             data-animate-on-init="true"
+        //-             data-color-plate="transparent")
+        //-   .col-md-3
+        //-     canvas(data-type="radial-gauge"
+        //-             data-width="300"
+        //-             data-height="300"
+        //-             data-units="Km/h"
+        //-             data-title="false"
+        //-             data-value=record.BatteryValue
+        //-             data-animate-on-init="true"
+        //-             data-animated-value="true"
+        //-             data-min-value="0"
+        //-             data-max-value="100"
+        //-             data-major-ticks="0,20,40,60,80,100"
+        //-             data-minor-ticks="2"
+        //-             data-stroke-ticks="false"
+        //-             data-highlights="[]"
+        //-             data-color-plate="transparent"
+        //-             data-color-major-ticks="black"
+        //-             data-color-minor-ticks="grey"
+        //-             data-color-title="black"
+        //-             data-color-units="black"
+        //-             data-color-numbers="black"
+        //-             data-color-needle-start="rgba(240, 128, 128, 1)"
+        //-             data-color-needle-end="rgba(255, 160, 122, .9)"
+        //-             data-value-box="true"
+        //-             data-animation-rule="bounce"
+        //-             data-animation-duration="500"
+        //-             data-font-value="Led"
+        //-             data-font-numbers="Led"
+        //-             data-border-outer-width="3"
+        //-             data-border-middle-width="3"
+        //-             data-border-inner-width="3")

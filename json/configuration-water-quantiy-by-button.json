@@ -2,9 +2,14 @@
   "method": "configuration",
   "data": {
     "head": 2,
-    "bid": 1,
-    "water": 22.22,
-    "seconds": 50
+    "btn": 1,
+		"water": {
+			"vol": 30,
+			"temp": 78
+		},
+		"steam": {
+			"dura": 60,
+			"temp": 140
+		}
   }
-
 }
