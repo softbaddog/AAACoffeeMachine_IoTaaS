@@ -2,12 +2,13 @@ const request = require('request');
 const cfg = require('./config');
 const msgpack = require('msgpack5')();
 
-// fetch accessToken when longin, and update before timeout
-exports.deviceCommands = (loginInfo, deivceId, data) => {
-  return new Promise((resolve, reject) => {
-    var options = {
+const url = 'https://' + cfg.host + ':' + cfg.port;
+
+const commandsOptions = (loginInfo, deivceId, rawData) => {
+  if (cfg.mode == 'old') {
+    return {
       method: 'POST',
-      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/cmd/v1.4.0/deviceCommands?appId=' + cfg.appId,
+      url: url + '/iocm/app/cmd/v1.4.0/deviceCommands?appId=' + cfg.appId,
       cert: cfg.cert,
       key: cfg.key,
       headers: {
@@ -23,8 +24,7 @@ exports.deviceCommands = (loginInfo, deivceId, data) => {
           serviceId: 'RawData',
           method: 'CMD',
           paras: {
-            // CMDDATA: msgpack.encode(data).toString('base64')
-            rawData: Buffer.from(data).toString('base64')
+            rawData: rawData
           }
         },
         expireTime: 0
@@ -32,26 +32,10 @@ exports.deviceCommands = (loginInfo, deivceId, data) => {
       strictSSL: false,
       json: true
     };
-
-    console.log(JSON.stringify(options.body));
-
-    request(options, (err, res, body) => {
-      if (err) throw err;
-
-      if (res.statusCode === 201) {
-        resolve();
-      } else {
-        console.log(body);
-      }
-    });
-  });
-};
-
-exports.deviceCommandsBasic = (loginInfo, deviceId, data) => {
-  return new Promise((resolve, reject) => {
-    var options = {
+  } else {
+    return {
       method: 'POST',
-      url: 'https://' + cfg.host + ':' + cfg.port + '/api/v3.0/devices/' + deviceId + '/commands',
+      url: url + '/api/v3.0/devices/' + deviceId + '/commands',
       cert: cfg.cert,
       key: cfg.key,
       headers: {
@@ -65,24 +49,40 @@ exports.deviceCommandsBasic = (loginInfo, deviceId, data) => {
         serviceId: 'RawData',
         method: 'CMD',
         body: {
-          // CMDDATA: msgpack.encode(data).toString('base64')
-          rawData: Buffer.from(data).toString('base64')
+          rawData: rawData
         },
         expireTime: 0
       },
       strictSSL: false,
       json: true
     };
+  }
+};
 
-    console.log(JSON.stringify(options.body));
+// fetch accessToken when longin, and update before timeout
+exports.deviceCommands = (loginInfo, deivceId, data) => {
+  return new Promise((resolve, reject) => {
+    var rawData;
+    switch (cfg.encode) {
+      case 'base64':
+        if(typeof data == 'object') {
+          rawData = Buffer.from(JSON.stringify(data)).toString('base64');
+        } else {
+          rawData = Buffer.from(data).toString('base64');
+        }
+        break;
 
-    request(options, (err, res, body) => {
-      if (err) throw err;
+      case 'msgpack':
+        rawData = msgpack.encode(data).toString('base64');
+        break;
 
+      default:
+        break;
+    }
+    request(commandsOptions(loginInfo, deivceId, rawData), (err, res, body) => {
+      console.log(body);
       if (res.statusCode === 201) {
         resolve();
-      } else {
-        console.log(body);
       }
     });
   });

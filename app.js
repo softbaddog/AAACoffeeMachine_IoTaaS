@@ -7,7 +7,6 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const mongoose = require('mongoose');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
 const User = require("./models/user");
 
 const indexRouter = require('./routes/index');
@@ -63,7 +62,7 @@ app.use('/product', productsRouter);
 app.use('/device', devicesRouter);
 app.use('/admin', adminRouter);
 
-auth.fetchAccessToken(cfg.mode).then((loginInfo) => {
+auth.fetchAccessToken().then((loginInfo) => {
   if (cfg.mode !== 'basic') {
     console.log("subscribe is coming...");
     for (const item of sub.notifyTypeList) {

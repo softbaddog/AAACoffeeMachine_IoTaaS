@@ -3,8 +3,8 @@ const cfg = require('./config');
 
 const url = 'https://' + cfg.host + ':' + cfg.port;
 
-const loginOptions = (mode) => {
-  if (mode == 'old') {
+const loginOptions = () => {
+  if (cfg.mode == 'old') {
     return {
       method: 'POST',
       url: url + '/iocm/app/sec/v1.1.0/login',
@@ -34,9 +34,9 @@ const loginOptions = (mode) => {
 };
 
 // fetch accessToken when longin, and update before timeout
-exports.fetchAccessToken = (mode) => {
+exports.fetchAccessToken = () => {
   return new Promise((resolve, reject) => {
-    request(loginOptions(mode), (err, res, body) => {
+    request(loginOptions(), (err, res, body) => {
       if (err) console.log(err);
       if (res.statusCode === 200) {
         exports.loginInfo = body;
@@ -44,7 +44,7 @@ exports.fetchAccessToken = (mode) => {
         resolve(body);
         // update token periodicity
         setTimeout(() => {
-          this.fetchAccessToken(mode);
+          this.fetchAccessToken();
         }, body.expiresIn * 1000 * 0.9);
       } else {
         console.log(body);
@@ -53,8 +53,8 @@ exports.fetchAccessToken = (mode) => {
   });
 };
 
-const logoutOptions = (mode, loginInfo) => {
-  if (mode == 'old') {
+const logoutOptions = (loginInfo) => {
+  if (cfg.mode == 'old') {
     return {
       method: 'POST',
       url: url + '/iocm/app/sec/v1.1.0/logout',

@@ -246,23 +246,30 @@ router.get('/:id', function (req, res, next) {
   });
 });
 
-router.put("/cmd/:id", (req, res, next) => {
-  console.log(req.params.id, req.query);
+router.post("/report/operation/:id", (req, res, next) => {
+  var data;
+  Device.findById(req.params.id, function (err, doc) {
+    if (!err && doc) {
+      if (req.query.power) {
+        let power = req.query.power;
+        data = {
+          "method": "operation",
+          "data": {
+            "head": 1,
+            "power": power === 'true' ? true : false
+          }
+        };
+      }
+      cmd.deviceCommands(auth.loginInfo, doc.deviceId, data);
+    }
+  });
   res.json({
     success: 1
   });
-  
-  // Device.findById(req.params.id, function (err, doc) {
-  //   cmd.deviceCommandsBasic(auth.loginInfo, doc.deviceId, data).then(data => {
-  //     if (err) {
-  //       console.log(err);
-  //     }
-  //   });
-  // });
 });
 
 // Send a Command
-router.post("/cmd/:id", (req, res, next) => {
+router.post("/report/configuration/:id", (req, res, next) => {
   Device.findById(req.params.id, function (err, doc) {
     console.log(req.body);
     let data = "";
@@ -274,17 +281,12 @@ router.post("/cmd/:id", (req, res, next) => {
     console.log(data);
     console.log(doc.deviceId);
     if (data !== "") {
-      cmd.deviceCommandsBasic(auth.loginInfo, doc.deviceId, data)
-        .then(data => {
-
-        })
-        .catch(err => {
-          console.log(err);
-          next();
-        });
+      cmd.deviceCommands(auth.loginInfo, doc.deviceId, data);
     }
   });
-  res.redirect('/device/' + req.params.id);
+  res.json({
+    success: 1
+  });
 });
 
 // Bind a new device with a readable name, and obtain a deviceId generated in OceanConnect Platform

@@ -1,14 +1,6 @@
 var request = require('request');
 var cfg = require('./config');
 
-// var deviceInfo = {
-//   manufacturerId: 'HuaweiDemoID',
-//   manufacturerName: 'HuaweiDemo',
-//   deviceType: 'Base64Demo',
-//   model: 'Base64',
-//   protocolType: 'CoAP'
-// };
-
 const url = 'https://' + cfg.host + ':' + cfg.port;
 
 const createOptions = (loginInfo, nodeId, productId) => {

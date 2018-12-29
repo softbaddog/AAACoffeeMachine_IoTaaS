@@ -27,7 +27,7 @@ var path = require('path');
 // OpenLab
 module.exports = {
 	mode: 'old',
-	encode: 'base64',  // base64, msgpack, default
+	encode: 'msgpack',  // base64, msgpack, default
 	host: '139.159.133.59',
 	port: '8743',
 	appId: 'nqwYk8QHVVHfRph5bQwUWy1SCDoa',
