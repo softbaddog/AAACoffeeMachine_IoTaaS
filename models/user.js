@@ -7,7 +7,7 @@ const User = new Schema({
 	initPwd: String,
 	active: Boolean,
 	expireTime: {
-		type: String,
+		type: Date,
 		default: moment().utc().add(1, 'year').format()
 	}
 });

@@ -9,10 +9,9 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const User = require("./models/user");
 
-const indexRouter = require('./routes/index');
+const adminRouter = require('./routes/admin');
 const productsRouter = require('./routes/products');
 const devicesRouter = require('./routes/devices');
-const adminRouter = require('./routes/admin');
 
 const cfg = require('./iotplatform/config');
 const auth = require('./iotplatform/auth');
@@ -28,7 +27,7 @@ mongoose.connect('mongodb://localhost/AAA', {
 
 mongoose.connection.once('open', () => {
   console.log("MongoDB connected success.");
-  if (cfg.mode == 'basic') {
+  if (cfg.mode == 'hub') {
     dis.load();
   }
 });
@@ -57,13 +56,12 @@ app.use(passport.session());
 
 app.locals.moment = require('moment');
 
-app.use('/', indexRouter);
+app.use('/', adminRouter);
 app.use('/product', productsRouter);
 app.use('/device', devicesRouter);
-app.use('/admin', adminRouter);
 
 auth.fetchAccessToken().then((loginInfo) => {
-  if (cfg.mode !== 'basic') {
+  if (cfg.mode == 'platform') {
     console.log("subscribe is coming...");
     for (const item of sub.notifyTypeList) {
       if (item.enabled) {

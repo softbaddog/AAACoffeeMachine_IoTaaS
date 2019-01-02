@@ -35,5 +35,4 @@ var ErrorCode = {
   GARBAGE_LOST_ALARM: 4,
   GARBAGE_FULL_ALARM: 5,
   STEAM_KEY_ALARM: 6,
-
-}
+};

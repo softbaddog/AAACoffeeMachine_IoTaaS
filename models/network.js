@@ -10,4 +10,4 @@ const Network = new Schema({
   deviceId: String
 });
 
-module.exports = mongoose.model('Network', Network);;
+module.exports = mongoose.model('Network', Network);

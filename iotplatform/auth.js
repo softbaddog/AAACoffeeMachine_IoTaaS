@@ -4,7 +4,7 @@ const cfg = require('./config');
 const url = 'https://' + cfg.host + ':' + cfg.port;
 
 const loginOptions = () => {
-  if (cfg.mode == 'old') {
+  if (cfg.mode == 'platform') {
     return {
       method: 'POST',
       url: url + '/iocm/app/sec/v1.1.0/login',
@@ -54,7 +54,7 @@ exports.fetchAccessToken = () => {
 };
 
 const logoutOptions = (loginInfo) => {
-  if (cfg.mode == 'old') {
+  if (cfg.mode == 'platform') {
     return {
       method: 'POST',
       url: url + '/iocm/app/sec/v1.1.0/logout',

@@ -4,7 +4,7 @@ var cfg = require('./config');
 const url = 'https://' + cfg.host + ':' + cfg.port;
 
 const createOptions = (loginInfo, nodeId, productId) => {
-  if (cfg.mode == 'old') {
+  if (cfg.mode == 'platform') {
     return {
       method: 'POST',
       url: url + '/iocm/app/reg/v1.2.0/devices',
@@ -65,7 +65,7 @@ exports.registerDevice = (loginInfo, nodeId, productId) => {
 };
 
 const deleteOptions = (loginInfo, deviceId) => {
-  if (cfg.mode == 'old') {
+  if (cfg.mode == 'platform') {
     return {
       method: 'DELETE',
       url: url + '/iocm/app/dm/v1.1.0/devices/' + deviceId,
@@ -117,7 +117,7 @@ exports.deleteDevice = (loginInfo, deviceId) => {
 };
 
 const statusOptions = (loginInfo, deviceId) => {
-  if (cfg.mode == 'old') {
+  if (cfg.mode == 'platform') {
     return {
       method: 'GET',
       url: url + '/iocm/app/reg/v1.1.0/deviceCredentials/' + deviceId,
@@ -159,7 +159,7 @@ exports.statusDevice = (loginInfo, deviceId) => {
     request(statusOptions(loginInfo, deviceId), (err, res, body) => {
       console.log(body);
       if (!err) {
-        if (cfg.mode == 'old') {
+        if (cfg.mode == 'platform') {
           resolve({
             status: body.activated ? 'ACTIVE' : 'UNACTIVE'
           });

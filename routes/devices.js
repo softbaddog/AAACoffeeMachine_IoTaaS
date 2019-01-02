@@ -14,7 +14,7 @@ const moment = require('moment');
 const _ = require('underscore');
 
 myEmitter.on('data', (data) => {
-  if (cfg.mode !== 'basic') return;
+  if (cfg.mode == 'platform') return;
   var idx;
   var d = JSON.parse(data.toString());
   var hasRawData = d.services.some(function (elem, index) {
@@ -55,8 +55,8 @@ router.get('/list', function (req, res, next) {
       }, function (err, devices) {
         if (err) console.log(err);
         res.render('device-list', {
-          title: 'Smoke Sensors Admin',
-          desc: 'Smoke Sensors Dashboard',
+          title: 'Coffee Machine Admin',
+          desc: 'Coffee Machine Dashboard',
           user: req.user,
           devices: devices
         });
@@ -65,8 +65,8 @@ router.get('/list', function (req, res, next) {
       Device.find({}, function (err, devices) {
         if (err) console.log(err);
         res.render('device-list', {
-          title: 'Smoke Sensors Admin',
-          desc: 'Smoke Sensors Dashboard',
+          title: 'Coffee Machine Admin',
+          desc: 'Coffee Machine Dashboard',
           user: req.user,
           devices: devices
         });
@@ -84,8 +84,8 @@ router.get('/update/:id', function (req, res, next) {
     Device.findById(id, function (err, device) {
       Product.find({}, function (err, docs) {
         res.render('device-new', {
-          title: 'Smoke Sensors Admin',
-          desc: 'Update Smoke Sensors',
+          title: 'Coffee Machine Admin',
+          desc: 'Update Coffee Machine',
           user: req.user,
           products: docs,
           device: device
@@ -207,14 +207,12 @@ router.get("/unbind/:id", (req, res, next) => {
 
 // GET device detail
 router.get('/:id', function (req, res, next) {
-  console.log(req.user);
   if (!req.user) res.redirect('/');
 
   let method = req.query.method || "keep-alive";
   Device.findById(req.params.id, function (err, device) {
     if (req.user && req.user.username != 'admin' &&
       device.userId != req.user._id) {
-      console.log(device.userId, req.user._id);
       res.redirect('/');
     }
 
@@ -222,11 +220,10 @@ router.get('/:id', function (req, res, next) {
       deviceId: device.deviceId,
       method: method
     }, function (err, doc) {
-      console.log(doc);
       if (!err && doc) {
         res.render('device-detail', {
           title: device.nodeName,
-          desc: 'Smoke Sensors Details',
+          desc: 'Coffee Machine Details',
           user: req.user,
           device: device,
           record: doc.data
@@ -234,7 +231,7 @@ router.get('/:id', function (req, res, next) {
       } else {
         res.render('device-detail', {
           title: device.nodeName,
-          desc: 'Smoke Sensors Details',
+          desc: 'Coffee Machine Details',
           user: req.user,
           device: device,
           record: ''
@@ -311,14 +308,24 @@ router.post("/callback", (req, res, next) => {
               case 'base64':
                 var buf = Buffer.from(req.body.service.data.rawData, 'base64').toString();
                 msg = JSON.parse(buf);
-                method = msg.method;
-                data = JSON.stringify(msg.data);
+                if (msg.method && msg.data) {
+                  method = msg.method;
+                  data = JSON.stringify(msg.data);
+                } else {
+                  method = 'keep-alive';
+                  data = buf;
+                }
                 break;
 
               case 'msgpack':
                 msg = msgpack.decode(Buffer.from(req.body.service.data.rawData, 'base64'));
-                method = msg.method;
-                data = JSON.stringify(msg.data);
+                if (msg.method && msg.data) {
+                  method = msg.method;
+                  data = JSON.stringify(msg.data);
+                } else {
+                  method = 'keep-alive';
+                  data = JSON.stringify(msg);
+                }
                 break;
 
               default:
@@ -330,8 +337,7 @@ router.post("/callback", (req, res, next) => {
               data: data,
               eventTime: req.body.service.eventTime
             }, function (err, doc) {
-              if (err) console.log(err);
-              myEmitter.emit('data', doc.data);
+              if (!err) myEmitter.emit('data', doc.data);
             });
             break;
 
@@ -339,6 +345,18 @@ router.post("/callback", (req, res, next) => {
             break;
 
           case "deviceDeleted":
+            break;
+
+          case "deviceInfoChanged":
+            if (req.body.deviceInfo && req.body.deviceInfo.status) {
+              doc.status = req.body.deviceInfo.status == 'ONLINE' ? 'ACTIVE' : 'UNACTIVE';
+              doc.save(function(err) {
+                if (!err) myEmitter.emit('data', doc.status);
+              });
+            }
+            break;
+
+          default:
             break;
         }
       }

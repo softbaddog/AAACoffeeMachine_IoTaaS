@@ -1,3 +1,3 @@
-var b = Buffer.from("gqZtZXRob2Spb3BlcmF0aW9upGRhdGGCpGhlYWQBpXBvd2Vyww==", "base64");
+var b = Buffer.from("NWNlYw==", "base64");
 
-console.log(b.toString('hex'));
+console.log(b.toString());
