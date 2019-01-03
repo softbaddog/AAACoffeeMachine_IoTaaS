@@ -1,13 +1,18 @@
 {
 	"method": "machine-operating",
 	"data": {
-		"bid": 5,
-		"blend": [0, 0, 0, 0],
-		"water": 10,
-		"oper_temp": 85.34,
-		"oper_time": 100,
-		"steam_temp": 140.00,
-		"steam_time": 30,
-		"level": 0
+		"btn": 4,
+		"fun": 3,
+		"color": [0, 0, 0, 0],
+		"coffee": {
+			"vol": 30,
+			"temp": 78
+		},
+		"steam": {
+			"dura": 50,
+			"temp": 140
+		},
+		"total-dura": 90,
+		"level-opened": false
 	}
 }

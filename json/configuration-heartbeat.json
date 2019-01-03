@@ -1,7 +1,7 @@
 {
 	"method": "configuration",
 	"data": {
-		"head": 1,
-		"timeout": 600
+		"head": 3,
+		"timeout": 86400
 	}
 }

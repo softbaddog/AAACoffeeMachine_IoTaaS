@@ -1,18 +1,10 @@
 var request = require('request');
 var cfg = require('./config');
 
-var deviceInfo = {
-  manufacturerId: '39129ce1-aab6-4142-8393-64b33b92d798',
-  manufacturerName: 'HuaweiDemo',
-  deviceType: 'Base64Demo',
-  model: 'Base64',
-  protocolType: 'CoAP'
-};
-
 const url = 'https://' + cfg.host + ':' + cfg.port;
 
 const createOptions = (loginInfo, nodeId, productId) => {
-  if (cfg.mode == 'old') {
+  if (cfg.mode == 'platform') {
     return {
       method: 'POST',
       url: url + '/iocm/app/reg/v1.2.0/devices',
@@ -47,6 +39,7 @@ const createOptions = (loginInfo, nodeId, productId) => {
         'ownerAppId': cfg.appId
       },
       body: {
+        'name': 'xxx',
         'productId': productId,
         'nodeId': nodeId,
         'timeout': 0
@@ -61,7 +54,7 @@ const createOptions = (loginInfo, nodeId, productId) => {
 exports.registerDevice = (loginInfo, nodeId, productId) => {
   return new Promise((resolve, reject) => {
     request(createOptions(loginInfo, nodeId, productId), (err, res, body) => {
-      console.log(res.body);
+      console.log(body);
       if (!err && res.statusCode === 200) {
         resolve(body.deviceId);
       } else {
@@ -72,7 +65,7 @@ exports.registerDevice = (loginInfo, nodeId, productId) => {
 };
 
 const deleteOptions = (loginInfo, deviceId) => {
-  if (cfg.mode == 'old') {
+  if (cfg.mode == 'platform') {
     return {
       method: 'DELETE',
       url: url + '/iocm/app/dm/v1.1.0/devices/' + deviceId,
@@ -123,10 +116,25 @@ exports.deleteDevice = (loginInfo, deviceId) => {
   });
 };
 
-// Query a device's status
-exports.statusDevice = (loginInfo, deviceId) => {
-  return new Promise((resolve, reject) => {
-    var options = {
+const statusOptions = (loginInfo, deviceId) => {
+  if (cfg.mode == 'platform') {
+    return {
+      method: 'GET',
+      url: url + '/iocm/app/reg/v1.1.0/deviceCredentials/' + deviceId,
+      cert: cfg.cert,
+      key: cfg.key,
+      headers: {
+        'app_key': cfg.appId,
+        'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
+      },
+      qs: {
+        'appId': cfg.appId
+      },
+      strictSSL: false,
+      json: true
+    };
+  } else {
+    return {
       method: 'GET',
       url: url + '/api/v3.0/devices/' + deviceId + '/status',
       cert: cfg.cert,
@@ -142,12 +150,24 @@ exports.statusDevice = (loginInfo, deviceId) => {
       strictSSL: false,
       json: true
     };
-    request(options, (err, res, body) => {
+  }
+};
+
+// Query a device's status
+exports.statusDevice = (loginInfo, deviceId) => {
+  return new Promise((resolve, reject) => {
+    request(statusOptions(loginInfo, deviceId), (err, res, body) => {
       console.log(body);
       if (!err) {
-        resolve({
-          status: body.status
-        });
+        if (cfg.mode == 'platform') {
+          resolve({
+            status: body.activated ? 'ACTIVE' : 'UNACTIVE'
+          });
+        } else {
+          resolve({
+            status: body.status
+          });
+        }
       } else {
         console.log(err);
       }
@@ -156,7 +176,7 @@ exports.statusDevice = (loginInfo, deviceId) => {
 };
 
 // Update a device
-exports.updateDevice = (loginInfo, deviceId, deviceName) => {
+exports.updateDevice = (loginInfo, deviceId, deviceName, product) => {
   return new Promise((resolve, reject) => {
     var options = {
       method: 'PUT',
@@ -172,11 +192,11 @@ exports.updateDevice = (loginInfo, deviceId, deviceName) => {
       },
       body: {
         name: deviceName,
-        manufacturerId: deviceInfo.manufacturerId,
-        manufacturerName: deviceInfo.manufacturerName,
-        deviceType: deviceInfo.deviceType,
-        model: deviceInfo.model,
-        protocolType: deviceInfo.protocolType
+        manufacturerId: product.manufacturerId,
+        manufacturerName: product.manufacturerName,
+        deviceType: product.deviceType,
+        model: product.model,
+        protocolType: product.protocolType
       },
       strictSSL: false,
       json: true

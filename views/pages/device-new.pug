@@ -4,9 +4,9 @@ block content
   .container
     .row
       .col-md-4
-        form.form-horizontal(method="POST", action="/admin/new")
+        form.form-horizontal(method="POST", action="/device/new")
           input(name='device[_id]', type="hidden", value=device._id)
-
+          input(name='device[userId]', type="hidden", value=user.id)
           .form-group
             label(for='inputProductId') Prouduct (model)
             select#inputProductId.form-control(name='device[productId]')

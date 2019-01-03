@@ -1,152 +1,141 @@
-const express = require('express');
-const router = express.Router();
-const _ = require('underscore');
-const Product = require('../models/product');
+var express = require('express');
+var router = express.Router();
 const Device = require('../models/device');
+const User = require('../models/user');
+const crypto = require('crypto');
+const cryptoRandomString = require('crypto-random-string');
+var CryptoJS = require("crypto-js");
+const passport = require('passport');
 
-const cfg = require('../iotplatform/config');
-const auth = require('../iotplatform/auth');
-const dm = require('../iotplatform/dm');
-
-// GET devices listing
-router.get('/list', function (req, res, next) {
-  var id = req.query.id;
-  if (id) {
-    Device.findById(id, function (err, doc) {
-      if (err) console.log(err);
-      dm.statusDevice(auth.loginInfo, doc.deviceId)
-        .then(data => {
-          doc.status = data.status;
-          doc.save();
-          res.redirect('/admin/list');
-        });
-    });
-  } else {
-    Device.find({}, function (err, devices) {
-      if (err) console.log(err);
-      res.render('list', {
-        title: 'NOS Cafe Admin',
-        desc: 'Coffee Machines Dashboard',
-        devices: devices
-      });
-    });
-  }
-});
-
-// Update a device
-router.get('/update/:id', function (req, res, next) {
-  var id = req.params.id;
-  if (id) {
-    Device.findById(id, function (err, device) {
-      Product.find({}, function (err, docs) {
-        res.render('admin', {
-          title: 'NOS Cafe Admin',
-          desc: 'Update Coffee Machine',
-          products: docs,
-          device: device
-        });
-      });
-    });
-  }
-});
-
-// Create a device
-router.get('/new', function (req, res, next) {
-  Product.find({}, function (err, docs) {
-    res.render('admin', {
-      title: 'NOS Cafe Admin',
-      desc: 'Add a new Coffee Machine',
-      products: docs,
-      device: {
-        nodeId: '',
-        nodeName: '',
-        productId: ''
-      }
+router.get('/', function (req, res, next) {
+  Device.find({}, function (err, devices) {
+    res.render('index', {
+      title: 'NOS Cafe',
+      desc: 'Home Page',
+      user: req.user,
+      devices: devices
     });
   });
 });
 
-router.post('/new', function (req, res, next) {
-  var id = req.body.device._id;
-  var deviceObj = req.body.device;
-  var _device;
-  if (id !== '') {
-    Device.findById(id, function (err, device) {
-      if (err) {
-        console.log(err);
-      }
-
-      _device = _.extend(device, deviceObj);
-      _device.save(function (err, doc) {
-        if (err) {
-          console.log(err);
-        } else {
-          res.redirect('/admin/list');
-        }
-      });
-    });
-  } else {
-    _device = new Device({
-      nodeId: deviceObj.nodeId,
-      nodeName: deviceObj.nodeName,
-      productId: deviceObj.productId
-    });
-    _device.save(function (err, doc) {
-      if (err) {
-        console.log(err);
-      } else {
-        res.redirect('/admin/list');
-      }
-    });
-  }
+router.get('/register', function (req, res, next) {
+  res.render('register', {
+    title: 'NOS Cafe',
+    desc: 'Register Page'
+  });
 });
 
-// Delete a device
-router.delete('/list', function (req, res, next) {
-  Device.findByIdAndRemove(req.query.id, function (err, device) {
+router.post('/register', function (req, res) {
+  User.register(new User({
+    username: req.body.username,
+    initPwd: Buffer.from(req.body.password).toString('base64'),
+    active: false
+  }), req.body.password, function (err, user) {
     if (err) {
-      console.log(err);
-    } else {
-      res.json({
-        success: 1
+      return res.render('register', {
+        error: err,
+        user: user
       });
     }
+    passport.authenticate('local')(req, res, function () {
+      res.redirect('/');
+    });
   });
 });
 
-// Bind a new device with a readable name, and obtain a deviceId generated in OceanConnect Platform
-router.get("/bind/:id", (req, res, next) => {
-  Device.findById(req.params.id, function (err, doc) {
-    dm.registerDevice(auth.loginInfo, doc.nodeId, doc.productId)
-      .then(deviceId => {
-        doc.deviceId = deviceId;
-        doc.save(function (err) {
-          if (cfg.mode !== "basic") {
-            dm.updateDevice(auth.loginInfo, deviceId, doc.nodeName)
-              .then(data => {
-                res.redirect('/admin/list');
-              });
-          } else {
-            res.redirect('/admin/list');
+router.get('/login', function (req, res, next) {
+  res.render('login', {
+    title: 'NOS Cafe',
+    desc: 'Login Page'
+  });
+});
+
+router.post('/login',
+  passport.authenticate('local'),
+  function (req, res) {
+    res.redirect('/');
+  });
+
+router.get('/logout', function (req, res) {
+  req.logout();
+  res.redirect('/');
+});
+
+router.get('/huaweicloud', function (req, res) {
+  const username = req.query.customerName;
+  const expireTime = req.query.expireTime;
+  let password;
+  // 如果用户曾经创建过，将初始密码返回
+  if (User.findOne({
+      username: username
+    }, function (err, user) {
+      if (!err && user) {
+        password = Buffer.from(user.initPwd, 'base64').toString();
+        huaweicloud(username, password, user.id, res);
+      } else {
+        password = cryptoRandomString(4); // 生成一个四位随机字符
+        User.register(new User({
+          username: username,
+          initPwd: Buffer.from(password).toString('base64'),
+          expireTime: dateToUtc(expireTime),
+          active: true
+        }), password, function (err, user) {
+          if (err) {
+            console.log(err);
           }
+          huaweicloud(username, password, user.id, res);
         });
-      });
-  });
+      }
+    }));
 });
 
-// Unbind a device using deviceId
-router.get("/unbind/:id", (req, res, next) => {
-  Device.findById(req.params.id, function (err, doc) {
-    dm.deleteDevice(auth.loginInfo, doc.deviceId)
-      .then(data => {
-        doc.deviceId = 0;
-        doc.status = 'UNACTIVE';
-        doc.save(function (err) {
-          if (err) console.log(err);
-          res.redirect('/admin/list');
-        });
-      });
-  });
-});
+function huaweicloud(username, password, id, res) {
+  const key = "ce791182-e292-4402-b2de-1c38e6b96aba";
+  var realkey = CryptoJS.SHA1(key);
+  realkey = CryptoJS.SHA1(realkey).toString().substring(0, 32);
+
+  const ivUser = cryptoRandomString(16);
+  const cipherUsr = crypto.createCipheriv('aes-128-cbc', Buffer.from(realkey, 'hex'), ivUser);
+  cipherUsr.update(username, 'utf8', 'base64');
+  const signUser = cipherUsr.final('base64');
+  // console.log(ivUser + signUser);
+
+  const ivPwd = cryptoRandomString(16);
+  const cipherPwd = crypto.createCipheriv('aes-128-cbc', Buffer.from(realkey, 'hex'), ivPwd);
+  cipherPwd.update(password, 'utf8', 'base64');
+  const signPwd = cipherPwd.final('base64');
+  // console.log(ivPwd + signPwd);
+
+  console.log(username, password, id);
+
+  const body = {
+    resultCode: "000000",
+    resultMsg: "success.",
+    instanceId: id,
+    encryptType: "2",
+    appInfo: {
+      frontEndUrl: "https://softbaddog.oicp.vip",
+      adminUrl: "https://softbaddog.oicp.vip",
+      userName: ivUser + signUser,
+      password: ivPwd + signPwd
+    }
+  };
+  const hmac = crypto.createHmac('sha256', key);
+  var up = hmac.update(JSON.stringify(body));
+  var result = up.digest('base64');
+  res.setHeader("Body-Sign", 'sign_type="HMAC-SHA256", signature="' + result + '"');
+  res.json(body);
+}
+
+function dateToUtc(s) {
+  var year = s.substring(0, 4);
+  var month = s.substring(4,6);
+  var day = s.substring(6,8);
+  var hour = s.substring(8,10);
+  var minute = s.substring(10,12);
+  var second = s.substring(12,14);
+
+  return new Date(year, month-1, day, hour, minute, second);
+}
 
 module.exports = router;

@@ -1,0 +1,216 @@
+extends ../layout
+
+block content
+  .container
+    .row
+      .col-md-4
+        .card
+          .card-header
+            .row
+              .col-md-6
+                .dropdown
+                  button.btn.btn-outline-info.dropdown-toggle(type="button" data-toggle="dropdown") System Setting 
+                  .dropdown-menu
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#confShortModal") Short Coffee
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#confLongModal") Long Coffee
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#confTeaModal") Tea
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#confGalaoModal") Galao Coffee
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#confCappuccinoModal") Cappuccino Coffee
+                    .dropdown-divider
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#confStandByModal") Stand-By Time
+              .col-md-6
+                .dropdown
+                  button.btn.btn-outline-danger.dropdown-toggle(type="button" data-toggle="dropdown") Coffee Drawing
+                  .dropdown-menu
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#shortModal") Short Coffee
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#longModal") Long Coffee
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#teaModal") Tea
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#milkModal") Milk Drinks
+                    .dropdown-divider
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#customModal") Custom
+          img.card-img-top(src="/img/DeltaCafe.png", alt="item.nodeName")
+          .card-body
+            .card-title
+              p.text-center.text-success= device.status
+          .card-footer
+            .switch.text-center.switch-large#mySwitch
+              if device.status == 'ACTIVE'
+                input(type='checkbox' name='inputSwitch' data-id=device._id data-on-text='ON' data-off-text='OFF')
+              else
+                input(type='checkbox' name='inputSwitch' data-id=device._id data-on-text='ON' data-off-text='OFF' disabled)
+      .col-md-8
+        .row
+          .col-md-3
+            .list-group
+              a.list-group-item.list-group-item-action(href="?method=keep-alive") Keep Alive
+              a.list-group-item.list-group-item-action(href="?method=machine-operating") Machine Operation
+              a.list-group-item.list-group-item-action(href="?method=error-reporting") Error Reporting
+          .col-md-9
+            p #{record}
+        .row
+          .modal.fade#confStandByModal
+            .modal-dialog.modal-md
+              .modal-content
+                .modal-header
+                  h4.modal-title Configuration
+                  button.close(type="button", data-dismiss="modal") &times;
+                .modal-body
+                  .form-group
+                    label(for='inputStandbyTime') Setting standby time (timeout in seconds) 
+                    input.form-control#inputStandbyTime(type='number', name="configuration[standbyTime]" placeholder="600")
+                .modal-footer
+                  button.btn.btn-primary(type="submit") Submit
+                  button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          .modal.fade#confShortModal
+            .modal-dialog.modal-md
+              .modal-content
+                .modal-header
+                  h4.modal-title Short Coffee Configuration
+                  button.close(type="button", data-dismiss="modal") &times;
+                .modal-body
+                  .form-group
+                    label(for='inputWater') Coffee (default: 30g, tolerance: 25-45)
+                    input.form-control#inputWater(type='number', name="conf[vol]")
+                  .form-group
+                    label(for='inputWater') Temperature (default: 78C, tolerance: 72-84)
+                    input.form-control#inputWater(type='number', name="conf[temp]")                        
+                .modal-footer
+                  button.btn.btn-primary(type="submit") Submit
+                  button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          .modal.fade#confLongModal
+            .modal-dialog.modal-md
+              .modal-content
+                .modal-header
+                  h4.modal-title Long Coffee Configuration
+                  button.close(type="button", data-dismiss="modal") &times;
+                .modal-body
+                  .form-group
+                    label(for='inputWater') Coffee (default: 45g, tolerance: 38-62)
+                    input.form-control#inputWater(type='number', name="conf[vol]")
+                  .form-group
+                    label(for='inputWater') Temperature (default: 78C, tolerance: 72-84)
+                    input.form-control#inputWater(type='number', name="conf[temp]")   
+                .modal-footer
+                  button.btn.btn-primary(type="submit") Submit
+                  button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          .modal.fade#confTeaModal
+            .modal-dialog.modal-md
+              .modal-content
+                .modal-header
+                  h4.modal-title Tea Configuration
+                  button.close(type="button", data-dismiss="modal") &times;
+                .modal-body
+                  .form-group
+                    label(for='inputWater') Coffee (default: 180g, tolerance: 153-207)
+                    input.form-control#inputWater(type='number', name="conf[vol]")
+                  .form-group
+                    label(for='inputWater') Temperature (default: &gt;72C)
+                    input.form-control#inputWater(type='number', name="conf[temp]")   
+                .modal-footer
+                  button.btn.btn-primary(type="submit") Submit
+                  button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          .modal.fade#confGalaoModal
+            .modal-dialog.modal-md
+              .modal-content
+                .modal-header
+                  h4.modal-title Galao Configuration
+                  button.close(type="button", data-dismiss="modal") &times;
+                .modal-body
+                  .form-group
+                    label(for='inputWater') Coffee (default: 150g, tolerance: 161.5-218.5g)
+                    input.form-control#inputWater(type='number', name="conf[vol]")
+                  .form-group
+                    label(for='inputWater') Temperature (default: 60C)
+                    input.form-control#inputWater(type='number', name="conf[temp]")
+                .modal-body
+                  .form-group
+                    label(for='inputWater') Steam (default: 180g, tolerance: 153-207)
+                    input.form-control#inputWater(type='number', name="conf[vol]")
+                  .form-group
+                    label(for='inputWater') Temperature (default: &gt;72C)
+                    input.form-control#inputWater(type='number', name="conf[temp]")   
+                .modal-footer
+                  button.btn.btn-primary(type="submit") Submit
+                  button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          .modal.fade#confCappuccinoModal
+            .modal-dialog.modal-md
+              .modal-content
+                .modal-header
+                  h4.modal-title Cappuccino Configuration
+                  button.close(type="button", data-dismiss="modal") &times;
+                .modal-body
+                  .form-group
+                    label(for='ex1') Coffee Volume (default: 40g, tolerance: 20-60g)
+                    input#ex1(data-slider-id='ex1Slider' type="text" data-slider-min="20" data-slider-max="60" data-slider-step="1" data-slider-value="40")
+                    span#ex1CurrentSliderValLabel &nbsp;Value: 
+                      span#ex1SliderVal 40
+                  .form-group
+                    label(for='ex2') Coffee Temperature (default: 78C, tolerance 70-85)
+                    input#ex2(data-slider-id='ex2Slider' type="text" data-slider-min="70" data-slider-max="85" data-slider-step="1" data-slider-value="78")
+                    span#ex2CurrentSliderValLabel &nbsp;Value: 
+                      span#ex2SliderVal 78
+                  .form-group
+                    label(for='ex3') Steam Duration (default: 50s, tolerance: 30-100s)
+                    input#ex3(data-slider-id='ex3Slider' type="text" data-slider-min="30" data-slider-max="100" data-slider-step="1" data-slider-value="50")
+                    span#ex3CurrentSliderValLabel &nbsp;Value: 
+                      span#ex3SliderVal 50
+                  .form-group
+                    label(for='ex4') Steam Temperature (default: 150C, tolerance: 140-160C)
+                    input#ex4(data-slider-id='ex3Slider' type="text" data-slider-min="140" data-slider-max="160" data-slider-step="1" data-slider-value="150")
+                    span#ex4CurrentSliderValLabel &nbsp;Value: 
+                      span#ex4SliderVal 150 
+                .modal-footer
+                  button.btn.btn-primary(type="submit") Submit
+                  button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+        //- .row
+        //-   .col-md-3
+        //-     canvas(data-type="linear-gauge"
+        //-             data-width="160"
+        //-             data-height="460"
+        //-             data-border-radius="20"
+        //-             data-borders="true"
+        //-             data-bar-stroke-width="20"
+        //-             data-minor-ticks="10"
+        //-             data-major-ticks="0,10,20,30,40,50,60"
+        //-             data-color-numbers="red,green,blue,transparent,#ccc,#ccc,#ccc"
+        //-             data-color-major-ticks="red,green,blue,transparent,#ccc,#ccc,#ccc"
+        //-             data-color-bar-stroke="#444"
+        //-             data-value=record.BatteryLevel
+        //-             data-units="°C"
+        //-             data-color-value-box-shadow="false"
+        //-             data-tick-side="left"
+        //-             data-number-side="left"
+        //-             data-needle-side="left"
+        //-             data-animate-on-init="true"
+        //-             data-color-plate="transparent")
+        //-   .col-md-3
+        //-     canvas(data-type="radial-gauge"
+        //-             data-width="300"
+        //-             data-height="300"
+        //-             data-units="Km/h"
+        //-             data-title="false"
+        //-             data-value=record.BatteryValue
+        //-             data-animate-on-init="true"
+        //-             data-animated-value="true"
+        //-             data-min-value="0"
+        //-             data-max-value="100"
+        //-             data-major-ticks="0,20,40,60,80,100"
+        //-             data-minor-ticks="2"
+        //-             data-stroke-ticks="false"
+        //-             data-highlights="[]"
+        //-             data-color-plate="transparent"
+        //-             data-color-major-ticks="black"
+        //-             data-color-minor-ticks="grey"
+        //-             data-color-title="black"
+        //-             data-color-units="black"
+        //-             data-color-numbers="black"
+        //-             data-color-needle-start="rgba(240, 128, 128, 1)"
+        //-             data-color-needle-end="rgba(255, 160, 122, .9)"
+        //-             data-value-box="true"
+        //-             data-animation-rule="bounce"
+        //-             data-animation-duration="500"
+        //-             data-font-value="Led"
+        //-             data-font-numbers="Led"
+        //-             data-border-outer-width="3"
+        //-             data-border-middle-width="3"
+        //-             data-border-inner-width="3")

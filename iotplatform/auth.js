@@ -3,8 +3,8 @@ const cfg = require('./config');
 
 const url = 'https://' + cfg.host + ':' + cfg.port;
 
-const options = (mode) => {
-  if (mode == 'old') {
+const loginOptions = () => {
+  if (cfg.mode == 'platform') {
     return {
       method: 'POST',
       url: url + '/iocm/app/sec/v1.1.0/login',
@@ -24,7 +24,6 @@ const options = (mode) => {
       cert: cfg.cert,
       key: cfg.key,
       body: {
-        clientType: 'app',
         key: cfg.appId,
         secret: cfg.secret
       },
@@ -35,9 +34,9 @@ const options = (mode) => {
 };
 
 // fetch accessToken when longin, and update before timeout
-exports.fetchAccessToken = (mode) => {
+exports.fetchAccessToken = () => {
   return new Promise((resolve, reject) => {
-    request(options(mode), (err, res, body) => {
+    request(loginOptions(), (err, res, body) => {
       if (err) console.log(err);
       if (res.statusCode === 200) {
         exports.loginInfo = body;
@@ -45,11 +44,27 @@ exports.fetchAccessToken = (mode) => {
         resolve(body);
         // update token periodicity
         setTimeout(() => {
-          this.fetchAccessToken(mode);
+          this.fetchAccessToken();
         }, body.expiresIn * 1000 * 0.9);
       } else {
         console.log(body);
       }
     });
   });
+};
+
+const logoutOptions = (loginInfo) => {
+  if (cfg.mode == 'platform') {
+    return {
+      method: 'POST',
+      url: url + '/iocm/app/sec/v1.1.0/logout',
+      cert: cfg.cert,
+      key: cfg.key,
+      body: {
+        accessToken: loginInfo.accessToken
+      },
+      strictSSL: false,
+      json: true
+    };
+  }
 };

@@ -1,5 +1,37 @@
 script(src="/socket.io/socket.io.js")
 script.
+  $(function(){
+    $('#mySwitch input').bootstrapSwitch();
+    $('#mySwitch').on('switchChange.bootstrapSwitch', function(event, state) {
+      var id = $(event.target).data('id')
+      console.log(id, state); // true | false
+    $.ajax({
+      type: 'POST',
+      url: '/device/report/operation/' + id + '?power='+state
+    })
+    .done(function(results){
+      if(results.success === 1){
+        console.log('ok');
+      }
+    });
+    });
+    $("#ex1").slider();
+    $("#ex1").on("slide", function(slideEvt) {
+      $("#ex1SliderVal").text(slideEvt.value);
+    });
+    $("#ex2").slider();
+    $("#ex2").on("slide", function(slideEvt) {
+      $("#ex2SliderVal").text(slideEvt.value);
+    });
+    $("#ex3").slider();
+    $("#ex3").on("slide", function(slideEvt) {
+      $("#ex3SliderVal").text(slideEvt.value);
+    });
+    $("#ex4").slider();
+    $("#ex4").on("slide", function(slideEvt) {
+      $("#ex4SliderVal").text(slideEvt.value);
+    });
+  });
   const socket = io();
   socket.on('data', function(obj) {
     location.reload();

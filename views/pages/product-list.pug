@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+  .container
+    .row
+      table.table.table-hover.table-bordered.table-sm
+        thead
+          tr
+            th DeviceType
+            th ManufacturerName
+            th ManufacturerId
+            th Model
+            th ProductId
+            th ProtocolType
+            th Delete
+        tbody
+          each item in products
+            tr
+              td #{item.deviceType}
+              td #{item.manufacturerName}
+              td #{item.manufacturerId}
+              td #{item.model}
+              td #{item.productId}
+              td #{item.protocolType}
+              td
+                a.btn.btn-sm.btn-danger(roel='button', target='_self', href='/product/delete/' + item._id) Delete

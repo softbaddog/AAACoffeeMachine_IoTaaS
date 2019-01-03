@@ -1,6 +1,7 @@
 {
 	"method": "operation",
 	"data": {
-		"head": 1
+		"head": 1,
+		"power": true
 	}
 }

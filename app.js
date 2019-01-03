@@ -3,14 +3,15 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const session = require('express-session');
+const flash = require('connect-flash');
 const mongoose = require('mongoose');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
+const User = require("./models/user");
 
-const indexRouter = require('./routes/index');
+const adminRouter = require('./routes/admin');
 const productsRouter = require('./routes/products');
 const devicesRouter = require('./routes/devices');
-const adminRouter = require('./routes/admin');
 
 const cfg = require('./iotplatform/config');
 const auth = require('./iotplatform/auth');
@@ -26,40 +27,9 @@ mongoose.connect('mongodb://localhost/AAA', {
 
 mongoose.connection.once('open', () => {
   console.log("MongoDB connected success.");
-  dis.load();
-});
-
-passport.use('local', new LocalStrategy(
-  function (username, password, done) {
-    var user = {
-      id: '1',
-      username: 'admin',
-      password: 'admin'
-    }; // 可以配置通过数据库方式读取登陆账号
-
-    if (username !== user.username) {
-      return done(null, false, {
-        message: 'Incorrect username.'
-      });
-    }
-    if (password !== user.password) {
-      return done(null, false, {
-        message: 'Incorrect password.'
-      });
-    }
-
-    console.log(username, password);
-
-    return done(null, user);
+  if (cfg.mode == 'hub') {
+    dis.load();
   }
-));
-
-passport.serializeUser(function (user, done) { //保存user对象
-  done(null, user); //可以通过数据库方式操作
-});
-
-passport.deserializeUser(function (user, done) { //删除user对象
-  done(null, user); //可以通过数据库方式操作
 });
 
 // view engine setup
@@ -73,20 +43,25 @@ app.use(express.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(session({ secret: "cats" }));
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+app.use(require('express-session')({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.locals.moment = require('moment');
 
-app.use('/', indexRouter);
-app.use('/products', productsRouter);
-app.use('/devices', devicesRouter);
-app.use('/admin', adminRouter);
+app.use('/', adminRouter);
+app.use('/product', productsRouter);
+app.use('/device', devicesRouter);
 
-
-auth.fetchAccessToken(cfg.mode).then((loginInfo) => {
-  if (cfg.mode !== 'basic') {
+auth.fetchAccessToken().then((loginInfo) => {
+  if (cfg.mode == 'platform') {
     console.log("subscribe is coming...");
     for (const item of sub.notifyTypeList) {
       if (item.enabled) {
