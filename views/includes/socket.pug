@@ -16,11 +16,17 @@ script.
     });
     });
     $("#btnStandBy").click(function(event) {
-      console.log(inputStandbyTime.value);
+      var timeout;
+      if (inputStandbyTime.value < 10) {
+        timeout = 10;
+      } else {
+        timeout = inputStandbyTime.value;
+      }
+      console.log(timeout);
       var id = $(event.target).data('id')
       $.ajax({
       type: 'POST',
-      url: '/device/report/configuration/' + id + '?standby='+inputStandbyTime.value
+      url: '/device/report/configuration/' + id + '?standby='+timeout
       })
       .done(function(results){
         if(results.success === 1){

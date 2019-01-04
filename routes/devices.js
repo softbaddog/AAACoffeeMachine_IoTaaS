@@ -281,6 +281,7 @@ router.post("/report/operation/:id", (req, res, next) => {
 
 // Send a Command
 router.post("/report/configuration/:id", (req, res, next) => {
+  var data;
   Device.findById(req.params.id, function (err, doc) {
     if (!err && doc) {
       if (req.query.standby) {

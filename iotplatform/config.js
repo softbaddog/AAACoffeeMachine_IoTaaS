@@ -12,19 +12,19 @@ var path = require('path');
 // 	key: fs.readFileSync(path.resolve(__dirname, 'ssl/client.key'))
 // };
 
-// IoT Cloud（Developer）
-// module.exports = {
-// 	mode: 'platform', // hub,platform
-// 	encode: 'msgpack',  // base64, msgpack, default
-// 	host: '49.4.92.191',
-// 	port: '8743',
-// 	appId: 'CNsJCMgvnNitKOq5FSiy994hHYIa',
-// 	secret: 'hdB2HJ3oL3eqIUPXQylIPSCppHoa',
-// 	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/client.crt')),
-// 	key: fs.readFileSync(path.resolve(__dirname, 'ssl/client.key')),
-// 	callback_url: 'https://softbaddog.oicp.vip:443/device/callback'
-// 	// callback_url: 'http://softbaddog.oicp.net:13899/device/callback'
-// };
+//IoT Cloud（Developer）
+module.exports = {
+	mode: 'platform', // hub,platform
+	encode: 'msgpack',  // base64, msgpack, default
+	host: '49.4.92.191',
+	port: '8743',
+	appId: 'CNsJCMgvnNitKOq5FSiy994hHYIa',
+	secret: 'hdB2HJ3oL3eqIUPXQylIPSCppHoa',
+	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/client.crt')),
+	key: fs.readFileSync(path.resolve(__dirname, 'ssl/client.key')),
+	// callback_url: 'https://softbaddog.oicp.vip:443/device/callback'
+	callback_url: 'http://softbaddog.oicp.net:13899/device/callback'
+};
 
 // IoT Cloud (European Hosting Center)
 // module.exports = {
@@ -36,23 +36,24 @@ var path = require('path');
 // 	secret: 'dEZQ0QIQzyTjB49aRuBrcNyfXcsa',
 // 	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/plt-app-gw.crt')),
 // 	key: fs.readFileSync(path.resolve(__dirname, 'ssl/plt-app-gw.key')),
-// 	callback_url: 'http://178.15.147.143:1985/device/callback'
+// 	callback_url: 'http://178.15.147.143:3000/device/callback'
 // 	// callback_url: 'http://softbaddog.oicp.net:13899/device/callback'
 // };
 
 // OpenLab
-module.exports = {
-	mode: 'platform', // hub,platform
-	encode: 'msgpack',  // base64, msgpack, default
-	host: '139.159.133.59',
-	port: '8743',
-	appId: 'nqwYk8QHVVHfRph5bQwUWy1SCDoa',
-	secret: 'kYooQ7IQbWhf1alhyFX3BuDaRpwa',
-	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/client.crt')),
-	key: fs.readFileSync(path.resolve(__dirname, 'ssl/client.key')),
-	//callback_url: 'https://softbaddog.oicp.vip:443/device/callback'
-	callback_url: 'http://softbaddog.oicp.net:13899/device/callback'
-};
+// module.exports = {
+// 	mode: 'platform', // hub,platform
+// 	encode: 'msgpack',  // base64, msgpack, default
+// 	host: '139.159.133.59',
+// 	port: '8743',
+// 	appId: 'nqwYk8QHVVHfRph5bQwUWy1SCDoa',
+// 	secret: 'kYooQ7IQbWhf1alhyFX3BuDaRpwa',
+// 	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/client.crt')),
+// 	key: fs.readFileSync(path.resolve(__dirname, 'ssl/client.key')),
+// 	//callback_url: 'https://softbaddog.oicp.vip:443/device/callback'
+// 	//callback_url: 'http://softbaddog.oicp.net:13899/device/callback'
+// 	callback_url: 'http://178.15.147.143:3000/device/callback'
+// };
 
 
 // CHINA TELECOM
