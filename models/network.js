@@ -7,7 +7,8 @@ const Network = new Schema({
   ECL: Number,
   SNR: String,
   CellID: String,
-  deviceId: String
+  deviceId: String,
+  eventTime: Date
 });
 
 module.exports = mongoose.model('Network', Network);

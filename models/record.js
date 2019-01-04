@@ -8,7 +8,7 @@ var Record = new Schema({
   },
   "method": String,
   "data": Object,
-  "eventTime": String,
+  "eventTime": Date,
 });
 
 module.exports = mongoose.model('Record', Record);;
