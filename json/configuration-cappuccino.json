@@ -1,0 +1,16 @@
+{
+  "method": "configuration",
+  "data": {
+    "head": 2,
+		"btn": 4,
+		"func": 3,
+		"coffee": {
+			"vol": 30,
+			"temp": 78
+		},
+		"steam": {
+			"dura": 60,
+			"temp": 140
+		}
+  }
+}

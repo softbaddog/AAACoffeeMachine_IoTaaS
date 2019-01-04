@@ -12,7 +12,7 @@ var MachineMode = {
 var NetworkMode = {
   ONLINE: 0,
   OFFLINE: 1
-}
+};
 
 var ButtonPressId = {
   SHORT_COFFEE: 1,

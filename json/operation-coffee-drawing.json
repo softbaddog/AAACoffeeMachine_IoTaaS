@@ -2,8 +2,8 @@
 	"method": "operation",
 	"data": {
 		"head": 2,
-		"btn": 5,
-		"water": {
+		"btn": 255,
+		"coffee": {
 			"vol": 30,
 			"temp": 78
 		}

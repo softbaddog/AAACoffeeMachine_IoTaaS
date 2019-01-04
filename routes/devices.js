@@ -256,7 +256,21 @@ router.post("/report/operation/:id", (req, res, next) => {
             "power": power === 'true' ? true : false
           }
         };
+      } else if (req.query.custom) {
+        let params = req.query.custom.split(',');
+        data = {
+          "method": "operation",
+          "data": {
+            "head": 2,
+            "btn": 255,
+            "coffee": {
+              "vol": parseInt(params[0]),
+              "temp": parseInt(params[1])
+            }
+          }
+        };
       }
+      console.log(data);
       cmd.deviceCommands(auth.loginInfo, doc.deviceId, data);
     }
   });
@@ -268,16 +282,36 @@ router.post("/report/operation/:id", (req, res, next) => {
 // Send a Command
 router.post("/report/configuration/:id", (req, res, next) => {
   Device.findById(req.params.id, function (err, doc) {
-    console.log(req.body);
-    let data = "";
-    if (req.body.StandbyTime !== '') {
-      data = "Stand_By_Time " + req.body.StandbyTime;
-    } else if (req.body.WaterUsage !== '') {
-      data = "Custom_Coffee " + req.body.WaterUsage;
-    }
-    console.log(data);
-    console.log(doc.deviceId);
-    if (data !== "") {
+    if (!err && doc) {
+      if (req.query.standby) {
+        let timeout = parseInt(req.query.standby);
+        data = {
+          "method": "configuration",
+          "data": {
+            "head": 1,
+            "timeout": timeout
+          }
+        };
+      } else if (req.query.cappuccino) {
+        let params = req.query.cappuccino.split(',');
+        data = {
+          "method": "configuration",
+          "data": {
+            "head": 2,
+            "btn": 4,
+            "func": 3,
+            "coffee": {
+              "vol": parseInt(params[0]),
+              "temp": parseInt(params[1])
+            },
+            "steam": {
+              "dura": parseInt(params[2]),
+              "temp": parseInt(params[3])
+            }
+          }
+        };
+      }
+      console.log(data);
       cmd.deviceCommands(auth.loginInfo, doc.deviceId, data);
     }
   });
@@ -350,7 +384,7 @@ router.post("/callback", (req, res, next) => {
           case "deviceInfoChanged":
             if (req.body.deviceInfo && req.body.deviceInfo.status) {
               doc.status = req.body.deviceInfo.status == 'ONLINE' ? 'ACTIVE' : 'UNACTIVE';
-              doc.save(function(err) {
+              doc.save(function (err) {
                 if (!err) myEmitter.emit('data', doc.status);
               });
             }

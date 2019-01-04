@@ -15,21 +15,78 @@ script.
       }
     });
     });
-    $("#ex1").slider();
-    $("#ex1").on("slide", function(slideEvt) {
-      $("#ex1SliderVal").text(slideEvt.value);
+    $("#btnStandBy").click(function(event) {
+      console.log(inputStandbyTime.value);
+      var id = $(event.target).data('id')
+      $.ajax({
+      type: 'POST',
+      url: '/device/report/configuration/' + id + '?standby='+inputStandbyTime.value
+      })
+      .done(function(results){
+        if(results.success === 1){
+          console.log('ok');
+        }
+      });
     });
-    $("#ex2").slider();
-    $("#ex2").on("slide", function(slideEvt) {
-      $("#ex2SliderVal").text(slideEvt.value);
+    var ex1Slider = $("#ex1").bootstrapSlider();
+    $("#ex1").on("slide", function(e) {
+      $("#ex1SliderVal").text(e.value);
     });
-    $("#ex3").slider();
-    $("#ex3").on("slide", function(slideEvt) {
-      $("#ex3SliderVal").text(slideEvt.value);
+    var ex2Slider = $("#ex2").bootstrapSlider();
+    $("#ex2").on("slide", function(e) {
+      $("#ex2SliderVal").text(e.value);
     });
-    $("#ex4").slider();
-    $("#ex4").on("slide", function(slideEvt) {
-      $("#ex4SliderVal").text(slideEvt.value);
+    var ex3Slider = $("#ex3").bootstrapSlider();
+    $("#ex3").on("slide", function(e) {
+      $("#ex3SliderVal").text(e.value);
+    });
+    var ex4Slider = $("#ex4").bootstrapSlider();
+    $("#ex4").on("slide", function(e) {
+      $("#ex4SliderVal").text(e.value);
+    });
+    $("#btnCappuccino").click(function(event) {
+      console.log(ex1Slider.bootstrapSlider('getValue'), 
+                  ex2Slider.bootstrapSlider('getValue'), 
+                  ex3Slider.bootstrapSlider('getValue'), 
+                  ex4Slider.bootstrapSlider('getValue'));
+      var id = $(event.target).data('id')
+      $.ajax({
+      type: 'POST',
+      url: '/device/report/configuration/' + id + '?cappuccino='
+        + ex1Slider.bootstrapSlider('getValue') + ',' 
+        + ex2Slider.bootstrapSlider('getValue') + ',' 
+        + ex3Slider.bootstrapSlider('getValue') + ',' 
+        + ex4Slider.bootstrapSlider('getValue')
+      })
+      .done(function(results){
+        if(results.success === 1){
+          console.log('ok');
+        }
+      });
+    });
+    var ex5Slider = $("#ex5").bootstrapSlider();
+    $("#ex5").on("slide", function(e) {
+      $("#ex5SliderVal").text(e.value);
+    });
+    var ex6Slider = $("#ex6").bootstrapSlider();
+    $("#ex6").on("slide", function(e) {
+      $("#ex6SliderVal").text(e.value);
+    });
+    $("#btnCustom").click(function(event) {
+      console.log(ex5Slider.bootstrapSlider('getValue'), 
+                  ex6Slider.bootstrapSlider('getValue'));
+      var id = $(event.target).data('id')
+      $.ajax({
+      type: 'POST',
+      url: '/device/report/operation/' + id + '?custom='
+        + ex5Slider.bootstrapSlider('getValue') + ',' 
+        + ex6Slider.bootstrapSlider('getValue')
+      })
+      .done(function(results){
+        if(results.success === 1){
+          console.log('ok');
+        }
+      });
     });
   });
   const socket = io();

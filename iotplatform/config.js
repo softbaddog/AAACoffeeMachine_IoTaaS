@@ -27,18 +27,18 @@ var path = require('path');
 // };
 
 // IoT Cloud (European Hosting Center)
-module.exports = {
-	mode: 'platform', // hub,platform
-	encode: 'base64',  // base64, msgpack, default
-	host: '160.44.197.248',
-	port: '8743',
-	appId: 'cHxwfUtRCxg8x8j8W4wApQ_mOZka',
-	secret: 'dEZQ0QIQzyTjB49aRuBrcNyfXcsa',
-	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/plt-app-gw.crt')),
-	key: fs.readFileSync(path.resolve(__dirname, 'ssl/plt-app-gw.key')),
-	callback_url: 'http://178.15.147.143:1985/device/callback'
-	// callback_url: 'http://softbaddog.oicp.net:13899/device/callback'
-};
+// module.exports = {
+// 	mode: 'platform', // hub,platform
+// 	encode: 'base64',  // base64, msgpack, default
+// 	host: '160.44.197.248',
+// 	port: '8743',
+// 	appId: 'cHxwfUtRCxg8x8j8W4wApQ_mOZka',
+// 	secret: 'dEZQ0QIQzyTjB49aRuBrcNyfXcsa',
+// 	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/plt-app-gw.crt')),
+// 	key: fs.readFileSync(path.resolve(__dirname, 'ssl/plt-app-gw.key')),
+// 	callback_url: 'http://178.15.147.143:1985/device/callback'
+// 	// callback_url: 'http://softbaddog.oicp.net:13899/device/callback'
+// };
 
 // OpenLab
 module.exports = {
