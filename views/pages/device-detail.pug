@@ -18,14 +18,17 @@ block content
                     a.dropdown-item(href="#" data-toggle="modal", data-target="#confCappuccinoModal") Cappuccino Coffee
                     .dropdown-divider
                     a.dropdown-item(href="#" data-toggle="modal", data-target="#confStandByModal") Stand-By Time
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#confHeartbeatModal") Heartbeat Time
               .col-md-6.col-6
                 .dropdown
                   button.btn.btn-outline-danger.dropdown-toggle(type="button" data-toggle="dropdown") Drawing
                   .dropdown-menu
-                    a.dropdown-item.disabled(href="#" data-toggle="modal", data-target="#shortModal") Short Coffee
-                    a.dropdown-item.disabled(href="#" data-toggle="modal", data-target="#longModal") Long Coffee
-                    a.dropdown-item.disabled(href="#" data-toggle="modal", data-target="#teaModal") Tea
-                    a.dropdown-item.disabled(href="#" data-toggle="modal", data-target="#milkModal") Milk Drinks
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#operShortModal") Short Coffee
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#operLongModal") Long Coffee
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#operTeaModal") Tea
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#operCleanningModal") Clenning
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#operGalaoModal") Galao Coffee
+                    a.dropdown-item(href="#" data-toggle="modal", data-target="#operCappuccinoModal") Cappuccino Coffee
                     .dropdown-divider
                     a.dropdown-item(href="#" data-toggle="modal", data-target="#operCustomModal") Custom
           img.card-img-top(src="/img/DeltaCafe.png", alt="item.nodeName")
@@ -57,9 +60,22 @@ block content
                 .modal-body
                   .form-group
                     label(for='inputStandbyTime') Setting standby time (timeout in seconds) 
-                    input.form-control#inputStandbyTime(type='number', name="configuration[standbyTime]" placeholder="Please fill 10-600 seconds")
+                    input.form-control#inputStandbyTime(type='number', placeholder="Please fill 10-600 seconds")
                 .modal-footer
                   button.btn.btn-primary#btnStandBy(type="button" data-id=device._id, data-dismiss="modal") Submit
+                  button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          .modal.fade#confHeartbeatModal
+            .modal-dialog.modal-md
+              .modal-content
+                .modal-header
+                  h4.modal-title Configuration
+                  button.close(type="button", data-dismiss="modal") &times;
+                .modal-body
+                  .form-group
+                    label(for='inputHeartbeatTime') Setting heartbeat time (timeout in seconds) 
+                    input.form-control#inputHeartbeatTime(type='number', placeholder="Please fill 10-86400 seconds")
+                .modal-footer
+                  button.btn.btn-primary#btnHeartbeat(type="button" data-id=device._id, data-dismiss="modal") Submit
                   button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
           .modal.fade#confCappuccinoModal
             .modal-dialog.modal-md
@@ -104,6 +120,72 @@ block content
                     span#ex6SliderVal 78
                 .modal-footer
                   button.btn.btn-primary#btnCustom(type="button" data-id=device._id, data-dismiss="modal") Submit
+                  button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          .modal.fade#operShortModal
+            .modal-dialog.modal-md
+              .modal-content
+                .modal-header
+                  h4.modal-title Short Coffee
+                  button.close(type="button", data-dismiss="modal") &times;
+                .modal-body
+                  span Drawing Short Coffee Now!!!
+                .modal-footer
+                  button.btn.btn-primary#btnShort(type="button" data-id=device._id, data-dismiss="modal") Submit
+                  button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          .modal.fade#operLongModal
+            .modal-dialog.modal-md
+              .modal-content
+                .modal-header
+                  h4.modal-title Long Coffee
+                  button.close(type="button", data-dismiss="modal") &times;
+                .modal-body
+                  span Drawing Long Coffee Now!!!
+                .modal-footer
+                  button.btn.btn-primary#btnLong(type="button" data-id=device._id, data-dismiss="modal") Submit
+                  button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          .modal.fade#operTeaModal
+            .modal-dialog.modal-md
+              .modal-content
+                .modal-header
+                  h4.modal-title Tea Coffee
+                  button.close(type="button", data-dismiss="modal") &times;
+                .modal-body
+                  span Drawing Tea Coffee Now!!!
+                .modal-footer
+                  button.btn.btn-primary#btnTea(type="button" data-id=device._id, data-dismiss="modal") Submit
+                  button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          .modal.fade#operCleanningModal
+            .modal-dialog.modal-md
+              .modal-content
+                .modal-header
+                  h4.modal-title Cleanning Coffee
+                  button.close(type="button", data-dismiss="modal") &times;
+                .modal-body
+                  span Cleanning Now!!!
+                .modal-footer
+                  button.btn.btn-primary#btnCleanning(type="button" data-id=device._id, data-dismiss="modal") Submit
+                  button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          .modal.fade#operGalaoModal
+            .modal-dialog.modal-md
+              .modal-content
+                .modal-header
+                  h4.modal-title Galao Coffee
+                  button.close(type="button", data-dismiss="modal") &times;
+                .modal-body
+                  span Drawing Galao Coffee Now!!!
+                .modal-footer
+                  button.btn.btn-primary#btnGalao(type="button" data-id=device._id, data-dismiss="modal") Submit
+                  button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
+          .modal.fade#operCappuccinoModal
+            .modal-dialog.modal-md
+              .modal-content
+                .modal-header
+                  h4.modal-title Cappuccino Coffee
+                  button.close(type="button", data-dismiss="modal") &times;
+                .modal-body
+                  span Drawing Cappuccino Coffee Now!!!
+                .modal-footer
+                  button.btn.btn-primary#btnCap(type="button" data-id=device._id, data-dismiss="modal") Submit
                   button.btn.btn-secondary(type="button", data-dismiss="modal") Cancel
         //- .row
         //-   .col-md-3

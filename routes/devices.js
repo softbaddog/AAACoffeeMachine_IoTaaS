@@ -256,6 +256,57 @@ router.post("/report/operation/:id", (req, res, next) => {
             "power": power === 'true' ? true : false
           }
         };
+      } else if (req.query.short) {
+        data = {
+          "method": "operation",
+          "data": {
+            "head": 2,
+            "btn": 1
+          }
+        };
+      } else if (req.query.long) {
+        data = {
+          "method": "operation",
+          "data": {
+            "head": 2,
+            "btn": 2
+          }
+        };
+      } else if (req.query.tea) {
+        data = {
+          "method": "operation",
+          "data": {
+            "head": 2,
+            "btn": 3
+          }
+        };
+      } else if (req.query.cleanning) {
+        data = {
+          "method": "operation",
+          "data": {
+            "head": 2,
+            "btn": 4,
+            "func": 1
+          }
+        };
+      } else if (req.query.galao) {
+        data = {
+          "method": "operation",
+          "data": {
+            "head": 2,
+            "btn": 4,
+            "func": 2
+          }
+        };
+      } else if (req.query.cappuccino) {
+        data = {
+          "method": "operation",
+          "data": {
+            "head": 2,
+            "btn": 4,
+            "func": 3
+          }
+        };
       } else if (req.query.custom) {
         let params = req.query.custom.split(',');
         data = {
@@ -290,6 +341,16 @@ router.post("/report/configuration/:id", (req, res, next) => {
           "method": "configuration",
           "data": {
             "head": 1,
+            "timeout": timeout
+          }
+        };
+      }
+      else if (req.query.heartbeat) {
+        let timeout = parseInt(req.query.heartbeat);
+        data = {
+          "method": "configuration",
+          "data": {
+            "head": 3,
             "timeout": timeout
           }
         };

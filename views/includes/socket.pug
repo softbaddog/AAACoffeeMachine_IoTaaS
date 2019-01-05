@@ -34,6 +34,25 @@ script.
         }
       });
     });
+    $("#btnHeartbeat").click(function(event) {
+      var timeout;
+      if (inputHeartbeatTime.value < 10 || inputHeartbeatTime.value > 86400) {
+        timeout = 86400;
+      } else {
+        timeout = inputHeartbeatTime.value;
+      }
+      console.log(timeout);
+      var id = $(event.target).data('id')
+      $.ajax({
+      type: 'POST',
+      url: '/device/report/configuration/' + id + '?heartbeat='+timeout
+      })
+      .done(function(results){
+        if(results.success === 1){
+          console.log('ok');
+        }
+      });
+    });
     var ex1Slider = $("#ex1").bootstrapSlider();
     $("#ex1").on("slide", function(e) {
       $("#ex1SliderVal").text(e.value);
@@ -87,6 +106,78 @@ script.
       url: '/device/report/operation/' + id + '?custom='
         + ex5Slider.bootstrapSlider('getValue') + ',' 
         + ex6Slider.bootstrapSlider('getValue')
+      })
+      .done(function(results){
+        if(results.success === 1){
+          console.log('ok');
+        }
+      });
+    });
+    $("#btnShort").click(function(event) {
+      var id = $(event.target).data('id')
+      $.ajax({
+      type: 'POST',
+      url: '/device/report/operation/' + id + '?short=1'
+      })
+      .done(function(results){
+        if(results.success === 1){
+          console.log('ok');
+        }
+      });
+    });
+    $("#btnLong").click(function(event) {
+      var id = $(event.target).data('id')
+      $.ajax({
+      type: 'POST',
+      url: '/device/report/operation/' + id + '?long=1'
+      })
+      .done(function(results){
+        if(results.success === 1){
+          console.log('ok');
+        }
+      });
+    });
+    $("#btnTea").click(function(event) {
+      var id = $(event.target).data('id')
+      $.ajax({
+      type: 'POST',
+      url: '/device/report/operation/' + id + '?tea=1'
+      })
+      .done(function(results){
+        if(results.success === 1){
+          console.log('ok');
+        }
+      });
+    });
+    $("#btnCleanning").click(function(event) {
+      var id = $(event.target).data('id')
+      $.ajax({
+      type: 'POST',
+      url: '/device/report/operation/' + id + '?cleanning=1'
+      })
+      .done(function(results){
+        if(results.success === 1){
+          console.log('ok');
+        }
+      });
+    });
+    $("#btnGalao").click(function(event) {
+      var id = $(event.target).data('id')
+      $.ajax({
+      type: 'POST',
+      url: '/device/report/operation/' + id + '?galao=1'
+      })
+      .done(function(results){
+        if(results.success === 1){
+          console.log('ok');
+        }
+      });
+    });
+    $("#btnCap").click(function(event) {
+      var id = $(event.target).data('id')
+      $.ajax({
+      type: 'POST',
+      url: '/device/report/operation/' + id + '?cappuccino=1'
       })
       .done(function(results){
         if(results.success === 1){
