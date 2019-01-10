@@ -26,7 +26,7 @@ module.exports = {
 	callback_url: 'http://softbaddog.oicp.net:13899/device/callback'
 };
 
-// IoT Cloud (European Hosting Center)
+// // IoT Cloud (European Hosting Center)
 // module.exports = {
 // 	mode: 'platform', // hub,platform
 // 	encode: 'msgpack',  // base64, msgpack, default
@@ -40,7 +40,7 @@ module.exports = {
 // 	// callback_url: 'http://softbaddog.oicp.net:13899/device/callback'
 // };
 
-// OpenLab
+// // OpenLab (IoT Developer Zone)
 // module.exports = {
 // 	mode: 'platform', // hub,platform
 // 	encode: 'msgpack',  // base64, msgpack, default
@@ -56,7 +56,7 @@ module.exports = {
 // };
 
 
-// CHINA TELECOM
+// // CHINA TELECOM
 // module.exports = {
 // 	mode: 'platform', // hub,platform
 // 	host: '180.101.147.89',
