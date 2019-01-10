@@ -344,8 +344,7 @@ router.post("/report/configuration/:id", (req, res, next) => {
             "timeout": timeout
           }
         };
-      }
-      else if (req.query.heartbeat) {
+      } else if (req.query.heartbeat) {
         let timeout = parseInt(req.query.heartbeat);
         data = {
           "method": "configuration",
@@ -431,9 +430,30 @@ router.post("/callback", (req, res, next) => {
               deviceId: doc.deviceId,
               method: method,
               data: data,
-              eventTime: req.body.service.eventTime
-            }, function (err, doc) {
-              if (!err) myEmitter.emit('data', doc.data);
+              eventTime: new Date(moment(req.body.service.eventTime).format())
+            }, function (err, record) {
+              if (err) {
+                console.log(err);
+              } else {
+                if (method == 'keep-alive' && msg.mode != 255) {
+                  var MachineMode = {
+                    0: "POWER_OFF",
+                    1: "POWER_ON",
+                    2: "SELF_CHECKING",
+                    3: "PRE_HEATING",
+                    4: "FINISHED_PRE_HEATING",
+                    5: "WORKING_STATUS",
+                    6: "DESCALING",
+                    7: "STAND_BY"
+                  };
+                  doc.machine = MachineMode[msg.data.mode];
+                  doc.save(function (err) {
+                    if (!err) myEmitter.emit('data', doc.status);
+                  });
+                } else {
+                  myEmitter.emit('data', doc.data);
+                }
+              }
             });
             break;
 

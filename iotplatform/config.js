@@ -12,10 +12,10 @@ var path = require('path');
 // 	key: fs.readFileSync(path.resolve(__dirname, 'ssl/client.key'))
 // };
 
-//IoT Cloud（Developer）
+// IoT Cloud（ Developer）
 module.exports = {
 	mode: 'platform', // hub,platform
-	encode: 'msgpack',  // base64, msgpack, default
+	encode: 'msgpack', // base64, msgpack, default
 	host: '49.4.92.191',
 	port: '8743',
 	appId: 'CNsJCMgvnNitKOq5FSiy994hHYIa',
@@ -29,7 +29,7 @@ module.exports = {
 // IoT Cloud (European Hosting Center)
 // module.exports = {
 // 	mode: 'platform', // hub,platform
-// 	encode: 'base64',  // base64, msgpack, default
+// 	encode: 'msgpack',  // base64, msgpack, default
 // 	host: '160.44.197.248',
 // 	port: '8743',
 // 	appId: 'cHxwfUtRCxg8x8j8W4wApQ_mOZka',

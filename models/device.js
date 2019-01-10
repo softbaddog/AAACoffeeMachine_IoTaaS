@@ -27,6 +27,10 @@ var Device = new Schema({
     type: String,
     default: "UNACTIVE"
   },
+  "machine": {
+    type: String,
+    default: "POWER_OFF"
+  },
   "meta": {
     "createdAt": {
       type: Date,

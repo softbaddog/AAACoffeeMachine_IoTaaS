@@ -1,17 +1,17 @@
 var MachineMode = {
-  POWER_OFF: 0,
-  POWER_ON: 1,
-  SELF_CHECKING: 2,
-  PRE_HEATING: 3,
-  FINISHED_PRE_HEATING: 4,
-  WORKING_STATUS: 5,
-  DESCALING: 6,
-  STAND_BY: 7
+  0: "POWER_OFF",
+  1: "POWER_ON",
+  2: "SELF_CHECKING",
+  3: "PRE_HEATING",
+  4: "FINISHED_PRE_HEATING",
+  5: "WORKING_STATUS",
+  6: "DESCALING",
+  7: "STAND_BY"
 };
 
 var NetworkMode = {
-  ONLINE: 0,
-  OFFLINE: 1
+  0: ONLINE,
+  1: OFFLINE
 };
 
 var ButtonPressId = {
