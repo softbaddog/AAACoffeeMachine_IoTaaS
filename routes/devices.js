@@ -26,7 +26,7 @@ myEmitter.on('data', (data) => {
       deviceId: d.deviceId,
       method: 'keep-alive',
       data: JSON.stringify(d.services[idx].data),
-      eventTime: d.eventTime
+      eventTime: new Date(moment(d.eventTime).format())
     });
     console.log(d.services[idx]);
   }
