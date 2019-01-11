@@ -2,6 +2,9 @@ var request = require('request');
 var cfg = require('./config');
 
 exports.notifyTypeList = [{
+  notifyType: 'bindDevice',
+  enabled: false
+}, {
   notifyType: 'deviceAdded',
   enabled: true
 }, {
@@ -11,16 +14,19 @@ exports.notifyTypeList = [{
   notifyType: 'deviceDataChanged',
   enabled: true
 }, {
+  notifyType: 'deviceDatasChanged',
+  enabled: false
+}, {
   notifyType: 'deviceDeleted',
   enabled: true
-}, {
-  notifyType: 'deviceEvent',
-  enabled: false
 }, {
   notifyType: 'messageConfirm',
   enabled: false
 }, {
   notifyType: 'commandRsp',
+  enabled: false
+}, {
+  notifyType: 'deviceEvent',
   enabled: false
 }, {
   notifyType: 'serviceInfoChanged',
@@ -29,18 +35,46 @@ exports.notifyTypeList = [{
   notifyType: 'ruleEvent',
   enabled: false
 }, {
-  notifyType: 'bindDevice',
+  notifyType: 'deviceModelAdded',
   enabled: false
 }, {
-  notifyType: 'deviceDatasChanged',
+  notifyType: 'deviceModelDeleted',
+  enabled: false
+}, {
+  notifyType: 'deviceDesiredPropertiesModifyStatusChanged',
   enabled: false
 }];
 
+exports.cleanAllSub = (loginInfo) => {
+  return new Promise((resolve, reject) => {
+    request({
+        method: "DELETE",
+        url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/sub/v1.2.0/subscriptions',
+        cert: cfg.cert,
+        key: cfg.key,
+        strictSSL: false,
+        json: true,
+        headers: {
+          'app_key': cfg.appId,
+          'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
+        }
+      },
+      (error, response, body) => {
+        if (!error && response.statusCode === 204) {
+          console.log("sub clean ok");
+        } else {
+          console.log(body);
+        }
+      });
+  });
+};
+
 exports.subscribe = (loginInfo, notifyType) => {
   return new Promise((resolve, reject) => {
-    var options = {
+    request({
       method: "POST",
-      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/sub/v1.1.0/subscribe',
+      // url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/sub/v1.1.0/subscribe',
+      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/sub/v1.2.0/subscriptions',
       cert: cfg.cert,
       key: cfg.key,
       strictSSL: false,
@@ -51,11 +85,10 @@ exports.subscribe = (loginInfo, notifyType) => {
       },
       body: {
         notifyType: notifyType,
-        callbackurl: cfg.callback_url
+        callbackUrl: cfg.callback_url
+        // callbackurl: 'https://127.0.0.1:443/callback'
       }
-    };
-
-    request(options, (error, response, body) => {
+    }, (error, response, body) => {
       if (!error && response.statusCode === 201) {
         console.log("sub '" + notifyType + "' ok");
       } else {

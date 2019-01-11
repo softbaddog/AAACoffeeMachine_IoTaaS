@@ -43,4 +43,4 @@ var Device = new Schema({
   }
 });
 
-module.exports = mongoose.model('Device', Device);;
+module.exports = mongoose.model('Device', Device);

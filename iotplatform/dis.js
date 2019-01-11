@@ -2,15 +2,17 @@ var request = require('request');
 var moment = require('moment');
 var crypto = require('crypto');
 var myEmitter = require('../MyEmitter');
+const msgpack = require('msgpack5')();
+const cfg = require('../iotplatform/config');
 
-const AK = "VWJDXW10MCBENASKJRW0";
-const SK = "2HuetFIl9wWrBdpuoykTnnrHgGteyeUMtST4AXME";
-const projectid = "70e38da67ab64bff9f434a026e25adc3";
-const streamName = "dis-4mvu";
-// const AK = "WDPFYNDGIX2YQBWJYPAX";
-// const SK = "MrOE6M1E2GcMvJLrMyyr0utWDCO3lcBqzbnBTI5p";
-// const projectid = "f7d55a9d45744c38a176c483ef926253";
-// const streamName = "dis-KOjm";
+// const AK = "VWJDXW10MCBENASKJRW0";
+// const SK = "2HuetFIl9wWrBdpuoykTnnrHgGteyeUMtST4AXME";
+// const projectid = "70e38da67ab64bff9f434a026e25adc3";
+// const streamName = "dis-4mvu";
+const AK = "WDPFYNDGIX2YQBWJYPAX";
+const SK = "MrOE6M1E2GcMvJLrMyyr0utWDCO3lcBqzbnBTI5p";
+const projectid = "f7d55a9d45744c38a176c483ef926253";
+const streamName = "dis-lX8p";
 const region = "cn-north-1";
 const Host = 'dis.cn-north-1.myhuaweicloud.com:20004';
 
@@ -28,11 +30,11 @@ const cursorsCanonicalQuery = {
   // 'starting-sequence-number': startingSequenceNumber
 };
 
-exports.load = function() {
+exports.load = function () {
   var cursorsOptions = options(cursorsHTTPRequestMethod, cursorsCanonicalURI, cursorsCanonicalQuery);
   request(cursorsOptions, function (error, res, body) {
     if (!error && res.statusCode == 200) {
-        getRecords(body.partition_cursor);
+      getRecords(body.partition_cursor);
     } else {
       console.error(body);
     }
@@ -48,10 +50,10 @@ function getRecords(partition_cursor) {
   var recordsOptions = options(recordsHTTPRequestMethod, recordsCanonicalURI, recordsCanonicalQuery);
   request(recordsOptions, function (error, res, body) {
     if (!error && res.statusCode == 200) {
-      console.log(body);
+      // console.log(body);
       if (body.records.length > 0) {
         for (let record of body.records) {
-          myEmitter.emit('data', Buffer.from(record.data, 'base64'));
+            myEmitter.emit('data', Buffer.from(record.data, 'base64'));
         }
       }
       if (body.next_partition_cursor) {

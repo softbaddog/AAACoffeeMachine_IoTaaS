@@ -34,7 +34,10 @@ myEmitter.on('data', (data) => {
 
 // GET devices listing
 router.get('/list', function (req, res, next) {
-  if (!req.user) res.redirect('/login');
+  if (!req.user) {
+    res.redirect('/login');
+    return;
+  }
 
   var id = req.query.id;
   var user = req.user;
@@ -77,7 +80,10 @@ router.get('/list', function (req, res, next) {
 
 // Update a device
 router.get('/update/:id', function (req, res, next) {
-  if (!req.user) res.redirect('/login');
+  if (!req.user) {
+    res.redirect('/login');
+    return;
+  }
 
   var id = req.params.id;
   if (id) {
@@ -97,7 +103,10 @@ router.get('/update/:id', function (req, res, next) {
 
 // Create a device
 router.get('/new', function (req, res, next) {
-  if (!req.user) res.redirect('/login');
+  if (!req.user) {
+    res.redirect('/login');
+    return;
+  }
 
   Product.find({}, function (err, docs) {
     res.render('device-new', {
@@ -153,7 +162,10 @@ router.post('/new', function (req, res, next) {
 
 // Delete a device
 router.delete('/list', function (req, res, next) {
-  if (!req.user) res.redirect('/login');
+  if (!req.user) {
+    res.redirect('/login');
+    return;
+  }
 
   Device.findByIdAndRemove(req.query.id, function (err, device) {
     if (err) {
@@ -206,8 +218,11 @@ router.get("/unbind/:id", (req, res, next) => {
 });
 
 // GET device detail
-router.get('/:id', function (req, res, next) {
-  if (!req.user) res.redirect('/');
+router.get('/:id', function (req, res) {
+  if (!req.user) {
+    res.redirect('/login');
+    return;
+  }
 
   let method = req.query.method || "keep-alive";
   Device.findById(req.params.id, function (err, device) {
@@ -216,30 +231,34 @@ router.get('/:id', function (req, res, next) {
       res.redirect('/');
     }
 
-    Record.findOne({
-      deviceId: device.deviceId,
-      method: method
-    }, function (err, doc) {
-      if (!err && doc) {
-        res.render('device-detail', {
-          title: device.nodeName,
-          desc: 'Coffee Machine Details',
-          user: req.user,
-          device: device,
-          record: doc.data
-        });
-      } else {
-        res.render('device-detail', {
-          title: device.nodeName,
-          desc: 'Coffee Machine Details',
-          user: req.user,
-          device: device,
-          record: ''
-        });
-      }
-    }).limit(1).sort({
-      _id: -1
-    });
+    if (!err && device) {
+      Record.findOne({
+        deviceId: device.deviceId,
+        method: method
+      }, function (err, doc) {
+        if (!err && doc) {
+          res.render('device-detail', {
+            title: device.nodeName,
+            desc: 'Coffee Machine Details',
+            user: req.user,
+            device: device,
+            record: doc.data
+          });
+        } else {
+          res.render('device-detail', {
+            title: device.nodeName,
+            desc: 'Coffee Machine Details',
+            user: req.user,
+            device: device,
+            record: ''
+          });
+        }
+      }).limit(1).sort({
+        _id: -1
+      });
+    } else {
+       res.redirect('/');
+    }
   });
 });
 
@@ -435,7 +454,7 @@ router.post("/callback", (req, res, next) => {
               if (err) {
                 console.log(err);
               } else {
-                if (method == 'keep-alive' && msg.mode != 255) {
+                if (msg.method && msg.method == 'keep-alive'  && msg.mode != 255) {
                   var MachineMode = {
                     0: "POWER_OFF",
                     1: "POWER_ON",

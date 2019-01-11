@@ -11,4 +11,4 @@ var Record = new Schema({
   "eventTime": Date,
 });
 
-module.exports = mongoose.model('Record', Record);;
+module.exports = mongoose.model('Record', Record);

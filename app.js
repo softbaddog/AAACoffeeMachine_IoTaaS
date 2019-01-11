@@ -63,11 +63,15 @@ app.use('/device', devicesRouter);
 auth.fetchAccessToken().then((loginInfo) => {
   if (cfg.mode == 'platform') {
     console.log("subscribe is coming...");
-    for (const item of sub.notifyTypeList) {
-      if (item.enabled) {
-        sub.subscribe(loginInfo, item.notifyType);
-      }
-    }
+    // sub.cleanAllSub(loginInfo).then(
+    //   () => {
+        for (const item of sub.notifyTypeList) {
+          if (item.enabled) {
+            sub.subscribe(loginInfo, item.notifyType);
+          }
+        }
+    //   }
+    // );
   }
 });
 

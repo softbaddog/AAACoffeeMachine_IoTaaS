@@ -4,7 +4,7 @@ const msgpack = require('msgpack5')();
 
 const url = 'https://' + cfg.host + ':' + cfg.port;
 
-const commandsOptions = (loginInfo, deivceId, rawData) => {
+const commandsOptions = (loginInfo, deviceId, rawData) => {
   if (cfg.mode == 'platform') {
     return {
       method: 'POST',
@@ -65,7 +65,7 @@ exports.deviceCommands = (loginInfo, deivceId, data) => {
     var rawData;
     switch (cfg.encode) {
       case 'base64':
-        if(typeof data == 'object') {
+        if (typeof data == 'object') {
           rawData = Buffer.from(JSON.stringify(data)).toString('base64');
         } else {
           rawData = Buffer.from(data).toString('base64');

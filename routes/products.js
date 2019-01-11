@@ -9,9 +9,12 @@ const _ = require('underscore');
 
 /* GET products listing. */
 router.get('/list', function (req, res, next) {
-  if (!req.user)  res.redirect('/login');
+  if (!req.user) {
+    res.redirect('/login');
+    return;
+  }
 
-  if (cfg.mode == 'basic') {
+  if (cfg.mode == 'hub') {
     let pageNo = parseInt(req.query.pageNo) || 0;
     let pageSize = parseInt(req.query.pageSize) || 10;
     pm.getProducts(auth.loginInfo, pageNo, pageSize)
@@ -43,20 +46,23 @@ router.get('/list', function (req, res, next) {
 });
 
 router.get('/new', function (req, res, next) {
-    if (!req.user)  res.redirect('/login');
+  if (!req.user) {
+    res.redirect('/login');
+    return;
+  }
 
-    res.render('product-new', {
-      title: 'NOS Cafe Admin',
-      desc: 'Add a new Product',
-      user: req.user,
-      product: {
-        deviceType: '',
-        manufacturerId: '',
-        manufacturerName: '',
-        model: '',
-        protocolType: ''
-      }
-    });
+  res.render('product-new', {
+    title: 'NOS Cafe Admin',
+    desc: 'Add a new Product',
+    user: req.user,
+    product: {
+      deviceType: '',
+      manufacturerId: '',
+      manufacturerName: '',
+      model: '',
+      protocolType: ''
+    }
+  });
 });
 
 router.post('/new', function (req, res, next) {
@@ -102,7 +108,7 @@ router.get('/delete/:id', function (req, res, next) {
     if (err) {
       console.log(err);
     } else {
-       res.redirect('/product/list');
+      res.redirect('/product/list');
     }
   });
 });
