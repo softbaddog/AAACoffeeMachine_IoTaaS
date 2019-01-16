@@ -62,6 +62,7 @@ exports.cleanAllSub = (loginInfo) => {
       (error, response, body) => {
         if (!error && response.statusCode === 204) {
           console.log("sub clean ok");
+          resolve();
         } else {
           console.log(body);
         }

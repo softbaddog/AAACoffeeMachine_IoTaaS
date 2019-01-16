@@ -1,9 +1,9 @@
 {
 	"method": "keep-alive",
 	"data": {
-		"v": "0.1.0",
+		"version": "0.1.0",
 		"mode": 255,
-		"t": "19700101T000000Z",
+		"timestamp": "19700101T000000Z",
 		"params": {
 			"imsi": "8618912345678",
 			"rsrp": -140,

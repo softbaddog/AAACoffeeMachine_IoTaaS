@@ -19,7 +19,7 @@ const commandsOptions = (loginInfo, deviceId, rawData) => {
         'appId': cfg.appId
       },
       body: {
-        deviceId: deivceId,
+        deviceId: deviceId,
         command: {
           serviceId: 'RawData',
           method: 'CMD',

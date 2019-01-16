@@ -61,6 +61,11 @@ router.get('/logout', function (req, res) {
   res.redirect('/');
 });
 
+router.post('/devices/callback', function (req, res) {
+  console.log(req.ip);
+  res.end();
+});
+
 router.get('/huaweicloud', function (req, res) {
   const username = req.query.customerName;
   const expireTime = req.query.expireTime;
@@ -137,5 +142,7 @@ function dateToUtc(s) {
 
   return new Date(year, month-1, day, hour, minute, second);
 }
+
+
 
 module.exports = router;

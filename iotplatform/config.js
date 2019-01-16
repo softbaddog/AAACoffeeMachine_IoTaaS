@@ -2,36 +2,37 @@ var fs = require('fs');
 var path = require('path');
 
 // IoT Cloud（Hub）
-module.exports = {
-	mode: 'hub', // hub,platform
-	encode: 'base64', // base64, msgpack, default
-	host: 'iot-api.huaweicloud.com', //49.4.80.153
-	port: '8743',
-	appId: 'FMIumADuCnoWxpC5XX2DI7dCt80a',
-	secret: 'e67suCHMPJTGjNiAIuFaheSMVhMa',
-	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/client.crt')),
-	key: fs.readFileSync(path.resolve(__dirname, 'ssl/client.key'))
-};
+// module.exports = {
+// 	mode: 'hub', // hub,platform
+// 	encode: 'base64', // base64, msgpack, default
+// 	host: 'iot-api.huaweicloud.com', //49.4.80.153
+// 	port: '8743',
+// 	appId: 'FMIumADuCnoWxpC5XX2DI7dCt80a',
+// 	secret: 'e67suCHMPJTGjNiAIuFaheSMVhMa',
+// 	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/client.crt')),
+// 	key: fs.readFileSync(path.resolve(__dirname, 'ssl/client.key'))
+// };
 
 // IoT Cloud（ Developer）
+module.exports = {
+	mode: 'platform', // hub,platform
+	encode: 'msgpack', // base64, msgpack, default
+	host: '49.4.92.191',
+	port: '8743',
+	appId: 'CNsJCMgvnNitKOq5FSiy994hHYIa',
+	secret: 'hdB2HJ3oL3eqIUPXQylIPSCppHoa',
+	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/client.crt')),
+	key: fs.readFileSync(path.resolve(__dirname, 'ssl/client.key')),
+	// callback_url: 'https://softbaddog.frpgz1.idcfengye.com:443/device/callback'
+	// callback_url: 'http://softbaddog.free.idcfengye.com/device/callback'
+	// callback_url: 'https://softbaddog.oicp.vip:443/device/callback'
+	callback_url: 'http://softbaddog.oicp.net:13899/device/callback'
+};
+
+// IoT Cloud (European Hosting Center)
 // module.exports = {
 // 	mode: 'platform', // hub,platform
 // 	encode: 'msgpack', // base64, msgpack, default
-// 	host: '49.4.92.191',
-// 	port: '8743',
-// 	appId: 'CNsJCMgvnNitKOq5FSiy994hHYIa',
-// 	secret: 'hdB2HJ3oL3eqIUPXQylIPSCppHoa',
-// 	cert: fs.readFileSync(path.resolve(__dirname, 'ssl/client.crt')),
-// 	key: fs.readFileSync(path.resolve(__dirname, 'ssl/client.key')),
-// 	callback_url: 'https://softbaddog.frpgz1.idcfengye.com:443/device/callback'
-// 	// callback_url: 'https://softbaddog.oicp.vip:443/device/callback'
-// 	// callback_url: 'http://softbaddog.oicp.net:13899/device/callback'
-// };
-
-// // IoT Cloud (European Hosting Center)
-// module.exports = {
-// 	mode: 'platform', // hub,platform
-// 	encode: 'msgpack',  // base64, msgpack, default
 // 	host: '160.44.197.248',
 // 	port: '8743',
 // 	appId: 'cHxwfUtRCxg8x8j8W4wApQ_mOZka',

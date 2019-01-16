@@ -12,7 +12,7 @@ const cfg = require('../iotplatform/config');
 const AK = "WDPFYNDGIX2YQBWJYPAX";
 const SK = "MrOE6M1E2GcMvJLrMyyr0utWDCO3lcBqzbnBTI5p";
 const projectid = "f7d55a9d45744c38a176c483ef926253";
-const streamName = "dis-lX8p";
+const streamName = "dis-BVlc";
 const region = "cn-north-1";
 const Host = 'dis.cn-north-1.myhuaweicloud.com:20004';
 
@@ -53,7 +53,7 @@ function getRecords(partition_cursor) {
       // console.log(body);
       if (body.records.length > 0) {
         for (let record of body.records) {
-            myEmitter.emit('data', Buffer.from(record.data, 'base64'));
+          myEmitter.emit('data', Buffer.from(record.data, 'base64'));
         }
       }
       if (body.next_partition_cursor) {

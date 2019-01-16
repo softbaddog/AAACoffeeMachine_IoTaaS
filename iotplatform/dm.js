@@ -68,7 +68,7 @@ const deleteOptions = (loginInfo, deviceId) => {
   if (cfg.mode == 'platform') {
     return {
       method: 'DELETE',
-      url: url + '/iocm/app/dm/v1.1.0/devices/' + deviceId,
+      url: url + '/iocm/app/dm/v1.4.0/devices/' + deviceId,
       cert: cfg.cert,
       key: cfg.key,
       headers: {
@@ -180,7 +180,7 @@ exports.updateDevice = (loginInfo, deviceId, deviceName, product) => {
   return new Promise((resolve, reject) => {
     var options = {
       method: 'PUT',
-      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/dm/v1.2.0/devices/' + deviceId,
+      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/dm/v1.4.0/devices/' + deviceId,
       cert: cfg.cert,
       key: cfg.key,
       headers: {

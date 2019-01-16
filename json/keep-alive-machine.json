@@ -1,9 +1,9 @@
 {
 	"method": "keep-alive",
 	"data": {
-		"v": "0.1.0",
+		"version": "0.1.0",
 		"mode": 5,
-		"t": "19700101T000000Z",
+		"timestamp": "19700101T000000Z",
 		"params": {
 			"btn": 4,
 			"fun": 3
