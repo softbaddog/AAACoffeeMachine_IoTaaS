@@ -257,7 +257,45 @@ router.get('/:id', function (req, res) {
         _id: -1
       });
     } else {
-       res.redirect('/');
+      res.redirect('/');
+    }
+  });
+});
+
+// GET device debug
+router.get('/debug/:id', function (req, res) {
+  Device.findById(req.params.id, function (err, device) {
+    if (!err && device) {
+      Record.find({
+        deviceId: device.deviceId
+      }, function (err, docs) {
+        if (!err && docs) {
+          res.render('device-debug', {
+            title: device.nodeName,
+            desc: 'Coffee Machine Debug',
+            user: req.user,
+            device: device,
+            records: docs
+          });
+        }
+      }).limit(10).sort({
+        _id: -1
+      });
+    } else {
+      res.redirect('/');
+    }
+  });
+});
+
+router.post('/debug/:id', function (req, res, next) {
+  console.log(req.body);
+  Device.findById(req.params.id, function (err, doc) {
+    if (!err && doc) {
+      cmd.deviceCommands(auth.loginInfo, doc.deviceId, req.body.debug)
+        .then(res.redirect('/device/debug/' + req.params.id));
+    } else {
+      console.log(err);
+      redirect('/');
     }
   });
 });
@@ -454,7 +492,7 @@ router.post("/callback", (req, res, next) => {
               if (err) {
                 console.log(err);
               } else {
-                if (msg.method && msg.method == 'keep-alive'  && msg.mode != 255) {
+                if (msg.method && msg.method == 'keep-alive' && msg.mode != 255) {
                   var MachineMode = {
                     0: "POWER_OFF",
                     1: "POWER_ON",

@@ -37,8 +37,7 @@ const loginOptions = () => {
 exports.fetchAccessToken = () => {
   return new Promise((resolve, reject) => {
     request(loginOptions(), (err, res, body) => {
-      if (err) console.log(err);
-      if (res.statusCode === 200) {
+      if (!err && res.statusCode === 200) {
         exports.loginInfo = body;
         console.log('fetchAccessToken: ' + JSON.stringify(body));
         resolve(body);
@@ -47,7 +46,7 @@ exports.fetchAccessToken = () => {
           this.fetchAccessToken();
         }, body.expiresIn * 1000 * 0.9);
       } else {
-        console.log(body);
+        console.log(err, body);
       }
     });
   });

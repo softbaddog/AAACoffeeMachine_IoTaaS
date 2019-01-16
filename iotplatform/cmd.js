@@ -63,6 +63,7 @@ const commandsOptions = (loginInfo, deviceId, rawData) => {
 exports.deviceCommands = (loginInfo, deivceId, data) => {
   return new Promise((resolve, reject) => {
     var rawData;
+    console.log(typeof data);
     switch (cfg.encode) {
       case 'base64':
         if (typeof data == 'object') {
@@ -73,16 +74,27 @@ exports.deviceCommands = (loginInfo, deivceId, data) => {
         break;
 
       case 'msgpack':
-        rawData = msgpack.encode(data).toString('base64');
+        if (typeof data == 'object') {
+          rawData = msgpack.encode(data).toString('base64');
+        } else {
+          try {
+            rawData = msgpack.encode(JSON.parse(data)).toString('base64');
+          } catch (error) {
+            console.log(error);
+            rawData = Buffer.from(data).toString('base64');
+          }
+        }
         break;
 
       default:
         break;
     }
+    console.log(rawData);
     request(commandsOptions(loginInfo, deivceId, rawData), (err, res, body) => {
-      console.log(body);
-      if (res.statusCode === 201) {
+      if (!err && res.statusCode === 201) {
         resolve();
+      } else {
+        console.log(err, body);
       }
     });
   });

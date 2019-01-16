@@ -1,0 +1,15 @@
+extends ../layout
+
+block content
+  .container
+    .row
+      .col-md-5
+        form(role="form" method="POST")
+          .form-group
+            label(for="demo") Input: 
+            textarea.form-control#demo(rows="10" name="debug")
+          input.btn.btn-primary(type="submit" value="Submit")
+      .col-md-7
+        ul.list-group
+          each d in records
+            li.list-group-item= d.data

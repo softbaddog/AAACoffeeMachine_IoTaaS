@@ -59,12 +59,12 @@ exports.cleanAllSub = (loginInfo) => {
           'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
         }
       },
-      (error, response, body) => {
-        if (!error && response.statusCode === 204) {
+      (err, res, body) => {
+        if (!err && res.statusCode === 204) {
           console.log("sub clean ok");
           resolve();
         } else {
-          console.log(body);
+          console.log(err, body);
         }
       });
   });
@@ -89,11 +89,11 @@ exports.subscribe = (loginInfo, notifyType) => {
         callbackUrl: cfg.callback_url
         // callbackurl: 'https://127.0.0.1:443/callback'
       }
-    }, (error, response, body) => {
-      if (!error && response.statusCode === 201) {
+    }, (err, res, body) => {
+      if (!err && res.statusCode === 201) {
         console.log("sub '" + notifyType + "' ok");
       } else {
-        console.log(body);
+        console.log(err, body);
       }
     });
   });
