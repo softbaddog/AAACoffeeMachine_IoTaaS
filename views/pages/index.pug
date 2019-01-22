@@ -13,6 +13,6 @@ block content
               p.card-text.text-success= item.status
               pre.card-text
                 | IMEI: #{item.nodeId} 
-                | Last Updated: #{moment(item.meta.updatedAt).format('YYYY/MM/DD HH:mm:ss')}
+                | CreateAt: #{moment(item.createdAt).format('YYYY/MM/DD HH:mm:ss')}
               a.btn.btn-primary(href="/device/" + item._id) Details
               a.btn.btn-light(href="/device/debug/" + item._id) Debug

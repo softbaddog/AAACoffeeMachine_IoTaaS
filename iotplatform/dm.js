@@ -217,6 +217,75 @@ exports.updateDevice = (loginInfo, deviceId, deviceName, product) => {
   });
 };
 
+// Get device list
+exports.getDevices = (loginInfo, pageNo, pageSize) => {
+  return new Promise((resovle, reject) => {
+    var options = {
+      method: 'GET',
+      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/dm/v1.4.0/devices',
+      cert: cfg.cert,
+      key: cfg.key,
+      headers: {
+        'app_key': cfg.appId,
+        'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
+      },
+      qs: {
+        'appId': cfg.appId,
+        'pageNo': pageNo,
+        'pageSize': pageSize
+      },
+      strictSSL: false,
+      json: true
+    };
+    request(options, (err, res, body) => {
+      if (!err && res.statusCode === 200) {
+        resovle({
+          result: true,
+          totalCount: body.totalCount,
+          devices: body.devices
+        });
+      } else {
+        reject({
+          result: false
+        });
+      }
+    });
+  });
+};
+
+// Get a device Info
+exports.getDeviceInfo = (loginInfo, deviceId) => {
+  return new Promise((resovle, reject) => {
+    var options = {
+      method: 'GET',
+      url: 'https://' + cfg.host + ':' + cfg.port + '/iocm/app/dm/v1.4.0/devices/' + deviceId,
+      cert: cfg.cert,
+      key: cfg.key,
+      headers: {
+        'app_key': cfg.appId,
+        'Authorization': loginInfo.tokenType + ' ' + loginInfo.accessToken
+      },
+      qs: {
+        'appId': cfg.appId,
+      },
+      strictSSL: false,
+      json: true
+    };
+    request(options, (err, res, body) => {
+      if (!err && res.statusCode === 200) {
+        resovle({
+          result: true,
+          device: body
+        });
+      } else {
+        reject({
+          result: false
+        });
+      }
+    });
+  });
+};
+
 // Get data history
 exports.getDataHistorty = (loginInfo, deviceId, pageNo, pageSize) => {
   return new Promise((resovle, reject) => {

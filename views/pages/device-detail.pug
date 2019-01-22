@@ -34,10 +34,13 @@ block content
           img.card-img-top(src="/img/DeltaCafe.png", alt="item.nodeName")
           .card-body
             .card-title
-              p.text-center.text-success= device.status
+              if device.deviceInfo
+                p.text-center.text-success Network: #{device.deviceInfo.status}
+                  span.text-center.small &nbsp;(#{device.deviceInfo.statusDetail})
+                p.text-center.text-success Machine: #{device.machine}
           .card-footer
             .switch.text-center.switch-large#mySwitch
-              if device.status == 'ACTIVE'
+              if device.status == 'ACTIVE' || 'ONLINE'
                 if device.machine != 'POWER_OFF'
                   input(type='checkbox' name='inputSwitch' data-id=device._id data-on-text='ON' data-off-text='OFF' checked)
                 else

@@ -52,29 +52,36 @@ router.get('/list', function (req, res, next) {
         });
     });
   } else {
-    if (user.username != 'admin') {
-      Device.find({
-        userId: user._id
-      }, function (err, devices) {
-        if (err) console.log(err);
-        res.render('device-list', {
-          title: 'Coffee Machine Admin',
-          desc: 'Coffee Machine Dashboard',
-          user: req.user,
-          devices: devices
-        });
+    let pageNo = parseInt(req.query.pageNo) || 0;
+    let pageSize = parseInt(req.query.pageSize) || 5;
+    dm.getDevices(auth.loginInfo, pageNo, pageSize)
+      .then(data => {
+        if (data.result) {
+          Device.find({
+            userId: user._id
+          }, function (err, docs) {
+            let devices = [];
+            for (var doc of docs) {
+              let idx = _.findKey(data.devices, {
+                deviceId: doc.deviceId
+              });
+              if (idx) {
+                devices.push(_.extend(doc.toObject(), data.devices[idx]));
+              } else {
+                devices.push(doc.toObject());
+              }
+            }
+            console.log(devices);
+            if (err) console.log(err);
+            res.render('device-list', {
+              title: 'Coffee Machine Admin',
+              desc: 'Coffee Machine Dashboard',
+              user: req.user,
+              devices: devices
+            });
+          });
+        }
       });
-    } else {
-      Device.find({}, function (err, devices) {
-        if (err) console.log(err);
-        res.render('device-list', {
-          title: 'Coffee Machine Admin',
-          desc: 'Coffee Machine Dashboard',
-          user: req.user,
-          devices: devices
-        });
-      });
-    }
   }
 });
 
@@ -139,7 +146,14 @@ router.post('/new', function (req, res, next) {
         if (err) {
           console.log(err);
         } else {
-          res.redirect('/device/list');
+          Product.findOne({
+            productId: doc.productId
+          }, function (err, product) {
+            dm.updateDevice(auth.loginInfo, doc.deviceId, doc.nodeName, product)
+              .then(data => {
+                res.redirect('/device/list');
+              });
+          });
         }
       });
     });
@@ -229,33 +243,39 @@ router.get('/:id', function (req, res) {
     if (req.user && req.user.username != 'admin' &&
       device.userId != req.user._id) {
       res.redirect('/');
+      return;
     }
 
     if (!err && device) {
-      Record.findOne({
-        deviceId: device.deviceId,
-        method: method
-      }, function (err, doc) {
-        if (!err && doc) {
-          res.render('device-detail', {
-            title: device.nodeName,
-            desc: 'Coffee Machine Details',
-            user: req.user,
-            device: device,
-            record: doc.data
+      dm.getDeviceInfo(auth.loginInfo, device.deviceId)
+        .then(data => {
+          Record.findOne({
+            deviceId: device.deviceId,
+            method: method
+          }, function (err, record) {
+            let obj = _.extend(device.toObject(), data.device);
+            if (!err && record) {
+              console.log(obj);
+              res.render('device-detail', {
+                title: device.nodeName,
+                desc: 'Coffee Machine Details',
+                user: req.user,
+                device: obj,
+                record: record.data
+              });
+            } else {
+              res.render('device-detail', {
+                title: device.nodeName,
+                desc: 'Coffee Machine Details',
+                user: req.user,
+                device: obj,
+                record: ''
+              });
+            }
+          }).limit(1).sort({
+            _id: -1
           });
-        } else {
-          res.render('device-detail', {
-            title: device.nodeName,
-            desc: 'Coffee Machine Details',
-            user: req.user,
-            device: device,
-            record: ''
-          });
-        }
-      }).limit(1).sort({
-        _id: -1
-      });
+        });
     } else {
       res.redirect('/');
     }
@@ -439,9 +459,9 @@ router.post("/report/configuration/:id", (req, res, next) => {
 });
 
 // Bind a new device with a readable name, and obtain a deviceId generated in OceanConnect Platform
-router.post("/callback", (req, res, next) => {
+router.post("/callback", (req, res) => {
   console.log(req.body);
-  if (req.body.deviceId) {
+  if (req.body && req.body.deviceId) {
     Device.findOne({
       deviceId: req.body.deviceId
     }, function (err, doc) {

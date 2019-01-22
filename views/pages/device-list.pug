@@ -8,8 +8,10 @@ block content
           tr
             th Name
             th IMEI
-            th Date created
+            th CreateTime
+            th LastModifiedTime
             th Status
+            th Status Detail
             th Bind to Platform
             th Update
             th Delete
@@ -19,9 +21,16 @@ block content
               td 
                 a(target='_self', href='/device/' + item._id) #{item.nodeName}
               td #{item.nodeId}
-              td #{moment(item.meta.createdAt).format('YYYY/MM/DD HH:mm:ss')}
-              td 
-                a(target='_self', href='/device/list?id=' + item._id) #{item.status}
+              if item.deviceInfo
+                td #{moment(item.createTime).format('YYYY/MM/DD HH:mm:ss')}
+                td #{moment(item.lastModifiedTime).format('YYYY/MM/DD HH:mm:ss')}
+                td #{item.deviceInfo.status}
+                td #{item.deviceInfo.statusDetail}
+              else
+                td
+                td
+                td
+                td
               td
                 if item.deviceId == 0
                   a.btn.btn-sm.btn-success(role='button', target='_self', href='/device/bind/'+item._id) Bind

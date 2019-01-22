@@ -31,15 +31,9 @@ var Device = new Schema({
     type: String,
     default: "POWER_OFF"
   },
-  "meta": {
-    "createdAt": {
-      type: Date,
-      default: Date.now()
-    },
-    "updatedAt": {
-      type: Date,
-      default: Date.now()
-    }
+  "createdAt": {
+    type: Date,
+    default: Date.now()
   }
 });
 
