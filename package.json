@@ -23,7 +23,7 @@
     "passport-local-mongoose": "^5.0.1",
     "pug": "^2.0.3",
     "request": "^2.88.0",
-    "socket.io": "^2.2.0",
+    "socket.io": "^2.4.0",
     "underscore": "^1.9.1"
   }
 }
